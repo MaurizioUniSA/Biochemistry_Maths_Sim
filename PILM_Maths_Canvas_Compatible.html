@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratory Calculations Hub</title>
+    
+    
+    
+    
+    <style>
+        :root {
+            --primary-color: #005A9C;
+            --secondary-color: #003B66;
+            --accent-color: #E87722;
+            --success-color: #28a745;
+            --success-hover: #218838;
+            --danger-color: #dc3545;
+            --light-gray: #f4f4f9;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #333;
+            --font-family-headings: Georgia, serif;
+            --font-family-body: Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family-body);
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.7;
+        }
+
+        #app-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--medium-gray);
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        header h1 {
+            font-family: var(--font-family-headings);
+            color: var(--secondary-color);
+            margin: 0;
+            text-align: center;
+            font-size: 1.8rem;
+            flex-grow: 1;
+        }
+
+        .header-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.2s ease-in-out;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .header-btn:hover { background-color: var(--success-hover); }
+
+        .instructions { text-align: center; font-size: 1.1rem; color: #555; }
+        
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .topic-card {
+            background-color: #fff;
+            border: 2px solid var(--medium-gray);
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+
+        .topic-card h3 {
+            font-family: var(--font-family-headings);
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        .topic-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: var(--accent-color); }
+        .topic-card.active { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.2); background-color: #f0f8ff; }
+        #explanation-display-area { margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--medium-gray); animation: fadeIn 0.5s; }
+
+        .explanation-content h2, .modal-content h2 { font-family: var(--font-family-headings); color: var(--secondary-color); margin-bottom: 1.5rem; }
+        .explanation-content h2 { border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; display: inline-block; }
+        .explanation-content h4 { font-family: var(--font-family-headings); color: var(--primary-color); font-size: 1.3rem; margin-top: 2rem; margin-bottom: 1rem; }
+        .example { background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
+        .example .question { font-weight: bold; color: var(--secondary-color); margin-bottom: 1rem; font-size: 1.1rem; }
+        .solution .step { margin-bottom: 1rem; padding-left: 1rem; border-left: 3px solid var(--medium-gray); }
+        .solution .step p { margin-bottom: 0.5rem; }
+        .example code { background-color: #e0e0e0; padding: 2px 5px; border-radius: 3px; font-weight: bold; }
+        .explanation-svg { max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); background-color: #f8f9fa; padding: 1rem; font-family: Arial, sans-serif; }
+        
+        code s {
+            text-decoration-color: var(--danger-color);
+            text-decoration-thickness: 2px;
+        }
+
+        /* METHOD TABS STYLES */
+        .method-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--medium-gray);
+        }
+        .method-tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        .method-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .method-solution {
+            padding-top: 1rem;
+        }
+
+        /* QUIZ STYLES */
+        .test-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: background-color 0.2s;
+        }
+        .test-btn:hover { background-color: #d16915; }
+
+        .quiz-container {
+            margin-top: 2rem;
+            padding: 2rem;
+            border: 2px solid var(--medium-gray);
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        #quiz-question { font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; }
+        #quiz-options { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+
+        .option-btn {
+            padding: 12px;
+            font-size: 1rem;
+            background-color: #fff;
+            border: 2px solid var(--medium-gray);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .option-btn:not([disabled]):hover { border-color: var(--primary-color); background-color: #f0f8ff; }
+        .option-btn.correct { background-color: var(--success-color); color: white; border-color: var(--success-color); }
+        .option-btn.incorrect { background-color: var(--danger-color); color: white; border-color: var(--danger-color); }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        #quiz-feedback { margin-top: 1.5rem; padding: 1rem; border-radius: 5px; font-weight: bold; }
+        #quiz-feedback .explanation { font-weight: normal; font-style: italic; margin-top: 0.5rem; }
+        
+        #next-question-btn {
+            display: block;
+            margin: 1.5rem 0 0 auto;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* MODAL STYLES */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
+        .modal-content { background: #fff; padding: 2rem 3rem; border-radius: 8px; max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        .modal-close { position: absolute; top: 10px; right: 20px; font-size: 2.5rem; font-weight: bold; color: #aaa; cursor: pointer; line-height: 1; }
+        .modal-close:hover { color: #333; }
+        .modal-content p { margin-bottom: 1rem; }
+        .modal-content ul { list-style-position: inside; padding-left: 1rem; margin-bottom: 1rem; }
+        .modal-content li { margin-bottom: 0.5rem; }
+        .modal-content strong { color: var(--primary-color); }
+        .glossary-term { margin-bottom: 1.2rem; padding-left: 1rem; border-left: 3px solid var(--accent-color); }
+        .glossary-term dt { font-weight: bold; font-size: 1.1rem; color: var(--secondary-color); }
+        .glossary-term dd { margin-left: 0; }
+        .hidden { display: none !important; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            body {
+                -webkit-text-size-adjust: 100%; /* Prevents iOS font scaling */
+            }
+            #app-container {
+                margin: 0;
+                padding: 1rem;
+                border-radius: 0;
+                box-shadow: none;
+                min-height: 100vh;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+                order: -1; /* Puts the title at the top */
+            }
+            
+            .header-btn-wrapper {
+                display: flex;
+                width: 100%;
+                gap: 1rem;
+            }
+
+            .header-btn {
+                flex-grow: 1; /* Makes buttons share space equally */
+            }
+
+            .topic-grid {
+                grid-template-columns: 1fr 1fr; /* Two columns on mobile */
+                gap: 1rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .quiz-container {
+                padding: 1rem;
+            }
+        }
+        /* --- END OF MOBILE RESPONSIVENESS --- */
+
+        /* --- FOOTER STYLE --- */
+        .app-footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <header>
+            <button id="getting-started-btn" class="header-btn">Getting Started</button>
+            <h1>Laboratory Calculations Hub</h1>
+            <button id="glossary-btn" class="header-btn">Glossary</button>
+        </header>
+
+        <main>
+            <p class="instructions">Select a topic below to learn a specific core concept and see worked examples.</p>
+            <div id="topic-grid" class="topic-grid"></div>
+            <div id="explanation-display-area" class="hidden"></div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <div id="getting-started-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>How to Use This App</h2>
+            <p>Welcome! This app is designed to help you master the essential maths skills needed in the laboratory.</p>
+            <ul>
+                <li><strong>Select a Topic:</strong> Click any tab below to begin.</li>
+                <li><strong>Learn the Concept:</strong> Each topic opens with a core explanation, key formulas, and a custom diagram to help you visualise the process.</li>
+                <li><strong>Study the Examples:</strong> Each worked example includes multiple tabs, where different ways to solve the same problem are shown. Some of these may resonate more with you.</li>
+                <li><strong>Test Your Understanding:</strong> Click the orange button to start a quiz. You have unlimited, adaptive questions.</li>
+                <li><strong>Use the Glossary:</strong> If you see a term you don't recognise, the Glossary button in the top-right has definitions for key terms.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div id="glossary-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Glossary of Key Terms</h2>
+            <dl>
+                <div class="glossary-term"><dt>Absorbance</dt><dd>A measure of the quantity of light that a sample absorbs. It is directly proportional to the concentration of the absorbing substance in the solution.</dd></div>
+                <div class="glossary-term"><dt>Aliquot</dt><dd>A portion of a larger whole, especially a sample of a solution taken for analysis.</dd></div>
+                <div class="glossary-term"><dt>Buffer</dt><dd>A solution containing a weak acid and its conjugate base, which resists changes in pH when small amounts of acid or base are added.</dd></div>
+                <div class="glossary-term"><dt>Concentration</dt><dd>The amount of a substance (solute) dissolved in a given amount of solvent or solution.</dd></div>
+                <div class="glossary-term"><dt>Diluent</dt><dd>The liquid (usually water or saline) added to a solution to decrease its concentration.</dd></div>
+                <div class="glossary-term"><dt>Dilution Factor</dt><dd>The total number of unit volumes in which the material is dissolved. A 1:100 dilution has a dilution factor of 100.</dd></div>
+                <div class="glossary-term"><dt>Molarity (M)</dt><dd>A unit of concentration, defined as the number of moles of a solute per litre of solution (mol/L).</dd></div>
+                <div class="glossary-term"><dt>Molecular Weight (MW)</dt><dd>The mass of one mole of a substance, typically expressed in grams per mole (g/mol).</dd></div>
+                <div class="glossary-term"><dt>pKa</dt><dd>A measure of acid strength. It is the pH at which a buffer system is 50% in its acidic form and 50% in its basic (conjugate base) form.</dd></div>
+                 <div class="glossary-term"><dt>Stock Solution</dt><dd>A concentrated solution that is diluted to a lower concentration for actual use.</dd></div>
+            </dl>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        This application was created by A/Prof Maurizio Costabile (UniSA) 2025.
+    </footer>
+
+    <script>
+        // Canvas LMS compatibility - execute immediately with fallback
+        (function() {
+            const executeInit = () => {
+            // --- DATA STORES ---
+            const topics = {
+                unitConversions: "Unit Conversions", totalAmounts: "Concentrations & Total Amounts", simpleDilutions: "Simple Dilutions",
+                serialDilutions: "Serial Dilutions & Plating", mixingSolutions: "Mixing Solutions", molarity: "Molarity & % Solutions",
+                absorbance: "Absorbance", buffers: "Buffers & pH", standardCurves: "Standard Curves & Graphing"
+            };
+
+            const topicExplanations = {
+                unitConversions: `
+                    <div class="explanation-content">
+                        <h2>Unit Conversions</h2>
+                        <p>Unit conversion is moving between metric scales. The key is to remember the relationship is always based on 1000.</p>
+                        <svg viewBox="0 0 500 250" class="explanation-svg" xmlns="http://www.w3.org/2000/svg">
+                            <style>.label{font-size:16px; font-family:Lato,sans-serif; text-anchor:middle}.step{font-size:12px;fill:#555}.arrow{stroke:#003B66;fill:#003B66;stroke-width:2;marker-end:url(#head1)}.arrow-text{fill:#005A9C;font-weight:bold;font-size:14px}</style>
+                            <defs><marker id="head1" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7"/></marker></defs>
+                            <path d="M250 50 v160" stroke="#E87722" stroke-width="4" />
+                            <text class="label" x="250" y="35">Kilo (k)</text><text class="label" x="250" y="85">Base (g, L, m)</text><text class="label" x="250" y="135">Milli (m)</text><text class="label" x="250" y="185">Micro (&micro;)</text><text class="label" x="250" y="235">Nano (n)</text>
+                            <path class="arrow" d="M300 105 h 50" /><text class="arrow-text" x="300" y="100">&times; 1000</text><text class="step" x="285" y="125">(BIG to small)</text>
+                            <path class="arrow" d="M200 105 h -50" /><text class="arrow-text" x="155" y="100">&divide; 1000</text><text class="step" x="130" y="125">(small to BIG)</text>
+                        </svg>
+                        <h4>Worked Examples</h4>
+                        <div class="example">
+                            <p class="question">1. Convert 15 mg to grams (g).</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="1" data-method="1">Method 1: Ladder</button>
+                                <button class="method-tab" data-example="1" data-method="2">Method 2: Conversion Factor</button>
+                                <button class="method-tab" data-example="1" data-method="3">Method 3: Powers of 10</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="1" data-method="1"><div class="step"><p><strong>Logic:</strong> We are going from a smaller unit (milli) UP the ladder to a bigger one (grams). This is one step up, so we DIVIDE by 1000.</p><p><code>15 / 1000 = 0.015 g</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="2"><div class="step"><p><strong>Logic:</strong> We want to cancel 'mg' and be left with 'g'. We know that 1 g = 1000 mg. We set up the fraction so 'mg' is on the bottom to cancel out.</p><p><code>15 <s>mg</s> &times; (1 g / 1000 <s>mg</s>) = 0.015 g</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="3"><div class="step"><p><strong>Logic:</strong> 'milli' means 10<sup>-3</sup>. We are converting 15 &times; 10<sup>-3</sup> g to the base unit (10<sup>0</sup> g). The number gets smaller.</p><p><code>15 mg = 15 &times; 10<sup>-3</sup> g = 0.015 g</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">2. Convert 0.5 Litres to microlitres (&micro;L).</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="2" data-method="1">Method 1: Ladder</button>
+                                <button class="method-tab" data-example="2" data-method="2">Method 2: Conversion Factor</button>
+                                <button class="method-tab" data-example="2" data-method="3">Method 3: Powers of 10</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="2" data-method="1"><div class="step"><p><strong>Logic:</strong> We are going DOWN the ladder twice (Litres -> milli -> micro). We MULTIPLY by 1000 for each step.</p><p><code>0.5 &times; 1000 &times; 1000 = 500,000 &micro;L</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="2"><div class="step"><p><strong>Logic:</strong> We set up two fractions to cancel Litres, then millilitres.</p><p><code>0.5 <s>L</s> &times; (1000 <s>mL</s> / 1 <s>L</s>) &times; (1000 &micro;L / 1 <s>mL</s>) = 500,000 &micro;L</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="3"><div class="step"><p><strong>Logic:</strong> 'micro' means 10<sup>-6</sup>. We are converting 0.5 L (base unit 10<sup>0</sup>) to &micro;L. The number must get much larger.</p><p><code>0.5 L = 0.5 &times; 10<sup>6</sup> &micro;L = 500,000 &micro;L</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">3. Convert a concentration of 200 ng/&micro;L to mg/mL.</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="3" data-method="1">Method 1: Logic</button>
+                                <button class="method-tab" data-example="3" data-method="2">Method 2: Conversion Factor</button>
+                                <button class="method-tab" data-example="3" data-method="3">Method 3: Powers of 10</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="3" data-method="1"><div class="step"><p><strong>Logic:</strong> First, make the volume units the same. 1 &micro;L is 1000 times smaller than 1 mL. So, 200 ng/&micro;L is the same as 200,000 ng/mL. Then, convert the mass. 200,000 ng is 0.2 mg.</p><p><code>Answer = 0.2 mg/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="2"><div class="step"><p><strong>Logic:</strong> We need to convert ng to mg AND &micro;L to mL. We use two conversion factors to cancel the unwanted units.</p><p><code>(200 <s>ng</s> / 1 <s>&micro;L</s>) &times; (1 mg / 1,000,000 <s>ng</s>) &times; (1000 <s>&micro;L</s> / 1 mL) = 0.2 mg/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="3"><div class="step"><p><strong>Logic:</strong> Convert everything to powers of 10 relative to the base units (g and L).</p><p><code>(200 &times; 10<sup>-9</sup> g / 1 &times; 10<sup>-6</sup> L) = 200 &times; 10<sup>-3</sup> g/L</code></p><p>Since 1 g/L = 1 mg/mL, the answer is 200 &times; 10<sup>-3</sup> mg/mL = <code>0.2 mg/mL</code>.</p></div></div>
+                            </div>
+                        </div>
+                    </div>`,
+                totalAmounts: `
+                    <div class="explanation-content">
+                        <h2>Concentrations & Total Amounts</h2>
+                        <p>This calculation determines the absolute amount of a substance (solute) within a given volume of solution. It's the link between how concentrated something is and how much of it you actually have.</p>
+                        <div class="formula">Amount = Concentration &times; Volume</div>
+                        <svg viewBox="0 0 500 200" class="explanation-svg" xmlns="http://www.w3.org/2000/svg">
+                            <style>.label{font-size:14px;fill:#333;text-anchor:middle}.title-label{font-weight:bold;font-size:16px}.formula-label{font-family:monospace;font-size:16px;fill:#003B66}.beaker{stroke:#003B66;stroke-width:2;fill:#a7d7f9}.arrow{stroke:#E87722;fill:none;stroke-width:2;marker-end:url(#head2)}</style>
+                            <defs><marker id="head2" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#E87722"/></marker></defs>
+                            <path class="beaker" d="M100 50 L 120 150 H 280 L 300 50 Z" />
+                            <text class="label title-label" x="200" y="35">Solution</text>
+                            <text class="label" x="200" y="80">Concentration (C)</text>
+                            <text class="label" x="200" y="100">Volume (V)</text>
+                            <path class="arrow" d="M290 100 H 370" />
+                            <text class="label title-label" x="410" y="80">Total Amount</text>
+                            <text class="label formula-label" x="410" y="105">C &times; V</text>
+                        </svg>
+                        <h4>Worked Examples</h4>
+                        <div class="example">
+                            <p class="question">1. How many grams of NaCl are in 250 mL of a 10 g/L solution?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="1" data-method="1">Method 1: Formula</button>
+                                <button class="method-tab" data-example="1" data-method="2">Method 2: Unit Cancellation</button>
+                                <button class="method-tab" data-example="1" data-method="3">Method 3: Proportional Reasoning</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="1" data-method="1"><div class="step"><strong>Step 1: Unify units.</strong> The concentration is in g/L, but the volume is in mL. Convert volume to Litres: 250 mL = 0.25 L.</div><div class="step"><strong>Step 2: Apply formula.</strong><p><code>Amount = Concentration &times; Volume</code></p><p><code>Amount = 10 g/L &times; 0.25 L = 2.5 g</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="2"><div class="step"><strong>Logic:</strong> Treat the concentration as a conversion factor to cancel out the volume unit (L) and be left with the mass unit (g).</div><div class="step"><strong>Calculation:</strong><p><code>250 <s>mL</s> &times; (1 <s>L</s> / 1000 <s>mL</s>) &times; (10 g / 1 <s>L</s>) = 2.5 g</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="3"><div class="step"><strong>Logic:</strong> The solution has 10 g in 1000 mL. How many grams are in 250 mL?</div><div class="step"><strong>Calculation:</strong><p><code>(10 g / 1000 mL) = (x g / 250 mL)</code></p><p><code>x = (10 g &times; 250 mL) / 1000 mL = 2.5 g</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">2. You need 50 &micro;g of DNA. Your stock solution is 200 ng/&micro;L. What volume do you need?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="2" data-method="1">Method 1: Rearranged Formula</button>
+                                <button class="method-tab" data-example="2" data-method="2">Method 2: Unit Cancellation</button>
+                                <button class="method-tab" data-example="2" data-method="3">Method 3: Step-by-Step</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="2" data-method="1"><div class="step"><strong>Step 1: Unify units.</strong> Amount needed is 50 &micro;g. Concentration is 200 ng/&micro;L. Let's convert the amount to ng: 50 &micro;g = 50,000 ng.</div><div class="step"><strong>Step 2: Apply rearranged formula.</strong><p><code>Volume = Amount / Concentration</code></p><p><code>Volume = 50,000 <s>ng</s> / (200 <s>ng</s>/&micro;L) = 250 &micro;L</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="2"><div class="step"><strong>Logic:</strong> We want to cancel 'ng' and be left with '&micro;L'. We can invert the concentration to achieve this.</div><div class="step"><strong>Calculation:</strong><p><code>50 <s>&micro;g</s> &times; (1000 <s>ng</s> / 1 <s>&micro;g</s>) &times; (1 &micro;L / 200 <s>ng</s>) = 250 &micro;L</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="3"><div class="step"><strong>Step 1: Convert concentration units.</strong> It's often easier to work with standard units. 200 ng/&micro;L is the same as 200 &micro;g/mL.</div><div class="step"><strong>Step 2: Use proportional reasoning.</strong> If we have 200 &micro;g in 1 mL, what volume contains 50 &micro;g? It must be a quarter of the volume.</div><div class="step"><strong>Calculation:</strong><p><code>Volume = (50 &micro;g / 200 &micro;g) &times; 1 mL = 0.25 mL = 250 &micro;L</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">3. You dissolve 5.84 g of NaCl (MW: 58.44 g/mol) in water to make a final volume of 200 mL. What is the concentration in g/L and in Molarity (M)?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="3" data-method="1">Method 1: Step-by-Step</button>
+                                <button class="method-tab" data-example="3" data-method="2">Method 2: Moles First</button>
+                                <button class="method-tab" data-example="3" data-method="3">Method 3: Proportional Reasoning</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="3" data-method="1"><div class="step"><strong>Step 1: Calculate concentration in g/L.</strong> You have 5.84 g in 200 mL (0.2 L).<p><code>Conc (g/L) = 5.84 g / 0.2 L = 29.2 g/L</code></p></div><div class="step"><strong>Step 2: Convert g/L to Molarity.</strong><p><code>Molarity = (Conc in g/L) / MW = 29.2 g/L / 58.44 g/mol = 0.5 M</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="2"><div class="step"><strong>Step 1: Calculate moles of NaCl.</strong><p><code>moles = mass / MW = 5.84 g / 58.44 g/mol = 0.1 mol</code></p></div><div class="step"><strong>Step 2: Calculate Molarity.</strong> You have 0.1 mol in 200 mL (0.2 L).<p><code>Molarity = moles / Litres = 0.1 mol / 0.2 L = 0.5 M</code></p></div><div class="step"><strong>Step 3: Convert Molarity to g/L.</strong><p><code>Conc (g/L) = Molarity &times; MW = 0.5 mol/L &times; 58.44 g/mol = 29.22 g/L</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="3"><div class="step"><strong>Logic for g/L:</strong> If there are 5.84 g in 200 mL, how many grams would be in 1000 mL (1 L)? Since 1000 is 5 times 200, we multiply the mass by 5. <p><code>Mass in 1L = 5.84 g &times; 5 = 29.2 g</code></p><p>So the concentration is <code>29.2 g/L</code>.</p></div><div class="step"><strong>Logic for Molarity:</strong> A 1 M solution would have 58.44 g in 1 L. Our solution has 29.22 g in 1 L. What fraction of 1 M is this? <p><code>Molarity = 29.22 g/L / 58.44 g/L = 0.5 M</code></p></div></div>
+                            </div>
+                        </div>
+                    </div>`,
+                simpleDilutions: `
+                    <div class="explanation-content">
+                        <h2>Simple Dilutions</h2>
+                        <p>A dilution adds solvent (diluent) to decrease concentration. The key principle is that the total amount of the original substance (the solute) does not change.</p>
+                        <div class="formula">C1 &times; V1 = C2 &times; V2</div>
+                        <svg viewBox="0 0 500 220" class="explanation-svg" xmlns="http://www.w3.org/2000/svg">
+                            <style>.label{font-size:14px;fill:#333;text-anchor:middle}.title-label{font-weight:bold;font-size:16px}.formula-label{font-family:monospace;font-size:16px;fill:#003B66}.tube{stroke:#003B66;stroke-width:2}.stock-liquid{fill:#005A9C}.final-liquid{fill:#a7d7f9}.arrow{stroke:#E87722;fill:none;stroke-width:2;marker-end:url(#head2)}</style>
+                            <defs><marker id="head2" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#E87722"/></marker></defs>
+                            <text class="label title-label" x="75" y="25">Stock Solution</text><rect class="tube" x="50" y="40" width="50" height="120" rx="5" fill="#fff"/><rect class="stock-liquid" x="51" y="50" width="48" height="109"/>
+                            <text class="label formula-label" x="75" y="180">C1</text>
+                            <text class="label title-label" x="425" y="25">Final Solution</text><rect class="tube" x="400" y="40" width="50" height="120" rx="5" fill="#fff"/><rect class="final-liquid" x="401" y="90" width="48" height="69"/>
+                            <text class="label formula-label" x="425" y="180">C2, V2</text>
+                            <path class="arrow" d="M120 100 H 210"/><text class="label" x="165" y="90">Take Aliquot</text><text class="label formula-label" x="165" y="115">V1</text>
+                            <path class="arrow" d="M240 100 H 380"/><text class="label" x="310" y="90">+ Add Diluent</text>
+                        </svg>
+                        <h4>Worked Examples</h4>
+                        <div class="example">
+                            <p class="question">1. You have a 1 mg/ml stock solution and need to make 200 &micro;l of a 32 &micro;g/ml solution. How do you prepare it?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="1" data-method="1">Method 1: Dilution Factor</button>
+                                <button class="method-tab" data-example="1" data-method="2">Method 2: Total Amount</button>
+                                <button class="method-tab" data-example="1" data-method="3">Method 3: C1V1=C2V2</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="1" data-method="1"><div class="step"><strong>Step 1: Unify units & find dilution factor.</strong> Stock is 1000 &micro;g/ml, final is 32 &micro;g/ml. Factor = 1000/32 = 31.25. You need to make a 1-in-31.25 dilution.</div><div class="step"><strong>Step 2: Calculate stock volume (V1).</strong> V1 = Final Volume / Factor = 200 &micro;l / 31.25 = <code>6.4 &micro;l</code>.</div><div class="step"><strong>Step 3: Calculate diluent.</strong> 200 &micro;l - 6.4 &micro;l = <code>193.6 &micro;l</code></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="2"><div class="step"><strong>Step 1: Find total amount of solute needed in the final solution.</strong><p>Amount = Conc. &times; Vol. = 32 &micro;g/<s>ml</s> &times; 0.2 <s>ml</s> = <code>6.4 &micro;g</code></p></div><div class="step"><strong>Step 2: Find what volume of stock contains that amount.</strong> Stock is 1000 &micro;g/ml.<p>Volume = Amount / Conc. = 6.4 <s>&micro;g</s> / 1000 <s>&micro;g</s>/ml = <code>0.0064 ml</code> or <code>6.4 &micro;l</code>.</p></div><div class="step"><strong>Step 3: Calculate diluent.</strong> 200 &micro;l - 6.4 &micro;l = <code>193.6 &micro;l</code></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="3"><div class="step"><strong>Step 1: Unify units.</strong> C1 = 1 mg/ml = 1000 &micro;g/ml. C2 = 32 &micro;g/ml. V2 = 200 &micro;l.</div><div class="step"><strong>Step 2: Rearrange formula to find V1.</strong> V1 = (C2 &times; V2) / C1</div><div class="step"><strong>Step 3: Calculate V1.</strong><p><code>V1 = (32 <s>&micro;g/ml</s> &times; 200 &micro;l) / 1000 <s>&micro;g/ml</s> = 6.4 &micro;l</code></p></div><div class="step"><strong>Step 4: Calculate diluent.</strong> 200 &micro;l - 6.4 &micro;l = <code>193.6 &micro;l</code></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">2. A culture of bacteria at 5 &times; 10<sup>8</sup> bacteria/ml is diluted 1 in 100. What is the final concentration?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="2" data-method="1">Method 1: Dilution Factor</button>
+                                <button class="method-tab" data-example="2" data-method="2">Method 2: Step-by-Step Logic</button>
+                                <button class="method-tab" data-example="2" data-method="3">Method 3: C1V1=C2V2</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="2" data-method="1"><div class="step"><p><strong>Logic:</strong> A "1 in 100" dilution means the final concentration is 1/100th of the original. The dilution factor is 100.</p><p><code>Final Conc. = (5 &times; 10<sup>8</sup> bacteria/ml) / 100 = 5 &times; 10<sup>6</sup> bacteria/ml</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="2"><div class="step"><p><strong>Logic:</strong> Imagine you have 1 mL of the stock solution. It contains 5 &times; 10<sup>8</sup> bacteria. If you add 99 mL of diluent, you now have the same number of bacteria (5 &times; 10<sup>8</sup>) in a new, larger volume of 100 mL.</p><p><code>Final Conc. = Total Bacteria / Total Volume = 5&times;10<sup>8</sup> / 100 ml = 5&times;10<sup>6</sup> bacteria/ml</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="3"><div class="step"><p><strong>Logic:</strong> A "1 in 100" dilution is like taking 1 part stock (V1=1) and making a final volume of 100 parts (V2=100). We can use these arbitrary volumes in the formula.</p><p><code>C2 = (C1 &times; V1) / V2 = (5&times;10<sup>8</sup> &times; 1<s>ml</s>) / 100<s>ml</s> = 5&times;10<sup>6</sup> bacteria/ml</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">3. You need 10 ml of bacteria at 1 &times; 10<sup>6</sup>/ml. Your stock is 5 &times; 10<sup>9</sup>/ml. How much stock do you need?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="3" data-method="1">Method 1: Dilution Factor</button>
+                                <button class="method-tab" data-example="3" data-method="2">Method 2: Total Amount</button>
+                                <button class="method-tab" data-example="3" data-method="3">Method 3: C1V1=C2V2</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="3" data-method="1"><div class="step"><strong>Step 1: Find the required dilution factor.</strong><p>Factor = C1 / C2 = (5&times;10<sup>9</sup>) / (1&times;10<sup>6</sup>) = 5000. You need a 1-in-5000 dilution.</p></div><div class="step"><strong>Step 2: Calculate stock volume (V1).</strong> The stock volume is the total volume divided by the factor.<p>V1 = Final Volume / Factor = 10 ml / 5000 = <code>0.002 ml</code> or <code>2 &micro;l</code>.</p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="2"><div class="step"><strong>Step 1: Calculate total bacteria needed.</strong><p>Amount = C2 &times; V2 = (1&times;10<sup>6</sup> bacteria/<s>ml</s>) &times; 10 <s>ml</s> = 1&times;10<sup>7</sup> bacteria.</p></div><div class="step"><strong>Step 2: Calculate volume of stock that contains this amount.</strong><p>Volume = Amount / C1 = (1&times;10<sup>7</sup> <s>bacteria</s>) / (5&times;10<sup>9</sup> <s>bacteria</s>/ml) = <code>0.002 ml</code> or <code>2 &micro;l</code>.</p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="3"><div class="step"><p><strong>Logic:</strong> Use the formula directly, solving for V1 (the volume of stock we need).</p><p><code>V1 = (C2 &times; V2) / C1</code></p><p><code>V1 = (1&times;10<sup>6</sup> <s>org/ml</s> &times; 10 ml) / (5&times;10<sup>9</sup> <s>org/ml</s>) = 0.002 ml</code></p><p>Convert to a measurable volume: 0.002 <s>ml</s> &times; 1000 &micro;l/<s>ml</s> = <code>2 &micro;l</code></p></div></div>
+                            </div>
+                        </div>
+                    </div>`,
+                serialDilutions: `
+                    <div class="explanation-content">
+                        <h2>Serial Dilutions & Plating</h2>
+                        <p>A serial dilution is a sequence of dilutions used to reduce a dense culture to a more usable concentration. The dilution factor at each step is multiplied to get the final dilution factor.</p>
+                        <svg viewBox="0 0 500 250" class="explanation-svg" xmlns="http://www.w3.org/2000/svg">
+                            <style>.label{font-size:12px;fill:#333;text-anchor:middle}.title-label{font-weight:bold;font-size:14px}.tube{stroke:#003B66;stroke-width:2;fill:#a7d7f9}.stock{fill:#005A9C}.arrow{stroke:#E87722;fill:none;stroke-width:2;marker-end:url(#head2)}</style>
+                            <defs><marker id="head2" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#E87722"/></marker></defs>
+                            <text class="label title-label" x="50" y="35">Stock</text><rect class="tube stock" x="25" y="40" width="50" height="100" rx="5"/>
+                            <text class="label" x="50" y="155">1 mL</text><path class="arrow" d="M80 80 H 140"/>
+                            <text class="label title-label" x="195" y="35">1:10</text><rect class="tube" x="170" y="40" width="50" height="100" rx="5"/><text class="label" x="195" y="155">1 mL</text><path class="arrow" d="M225 80 H 285"/>
+                            <text class="label title-label" x="340" y="35">1:100</text><rect class="tube" x="315" y="40" width="50" height="100" rx="5"/><text class="label" x="340" y="155">1 mL</text><path class="arrow" d="M370 75 H 430"/>
+                            <text class="label title-label" x="455" y="55">Plate</text><path d="M440 60 h 30 v 30 h -30 z" stroke="#003B66" stroke-width="2" fill="#f0f8ff"/>
+                            <text class="label" x="250" y="200">Total Dilution Factor = DF1 &times; DF2 &times; ...</text>
+                            <text class="label" x="250" y="220">Here: 10 &times; 10 = 100</text>
+                        </svg>
+                        <h4>Worked Examples</h4>
+                        <div class="example">
+                            <p class="question">1. You perform three 1:10 dilutions of a stock at 5&times;10<sup>9</sup> cells/mL. What is the final concentration?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="1" data-method="1">Method 1: Cumulative Factor</button>
+                                <button class="method-tab" data-example="1" data-method="2">Method 2: Step-by-Step</button>
+                                <button class="method-tab" data-example="1" data-method="3">Method 3: Powers of 10</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="1" data-method="1"><div class="step"><strong>Step 1: Calculate total dilution factor.</strong><p><code>DF_total = 10 &times; 10 &times; 10 = 1000</code></p></div><div class="step"><strong>Step 2: Divide stock concentration by total factor.</strong><p><code>Final Conc. = (5&times;10<sup>9</sup>) / 1000 = 5&times;10<sup>6</sup> cells/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="2"><div class="step"><p><strong>After 1st dilution:</strong> (5&times;10<sup>9</sup>) / 10 = 5&times;10<sup>8</sup> cells/mL</p></div><div class="step"><p><strong>After 2nd dilution:</strong> (5&times;10<sup>8</sup>) / 10 = 5&times;10<sup>7</sup> cells/mL</p></div><div class="step"><p><strong>After 3rd dilution:</strong> (5&times;10<sup>7</sup>) / 10 = <code>5&times;10<sup>6</sup> cells/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="3"><div class="step"><strong>Logic:</strong> The stock is 5&times;10<sup>9</sup>. Each 1:10 dilution reduces the power of 10 by one.</div><div class="step"><p><code>Start: 5&times;10<sup>9</sup></code></p><p><code>Dilution 1: 5&times;10<sup>8</sup></code></p><p><code>Dilution 2: 5&times;10<sup>7</sup></code></p><p><code>Dilution 3: 5&times;10<sup>6</sup> cells/mL</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">2. You plate 100 &micro;L from a 10<sup>-4</sup> dilution tube and count 45 colonies. What was the original stock concentration in CFU/mL?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="2" data-method="1">Method 1: Standard Formula</button>
+                                <button class="method-tab" data-example="2" data-method="2">Method 2: Working Backwards</button>
+                                <button class="method-tab" data-example="2" data-method="3">Method 3: Unit Cancellation</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="2" data-method="1"><div class="step"><strong>Formula:</strong> CFU/mL = (Number of Colonies &times; Dilution Factor) / Volume Plated (mL)</div><div class="step"><strong>Step 1: Unify units.</strong> Volume plated = 100 &micro;L = 0.1 mL. Dilution Factor = 10<sup>4</sup> = 10,000.</div><div class="step"><strong>Step 2: Calculate.</strong><p><code>CFU/mL = (45 &times; 10,000) / 0.1 = 4,500,000</code></p><p>In scientific notation: <code>4.5 &times; 10<sup>6</sup> CFU/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="2"><div class="step"><strong>Step 1: Find concentration in the tube.</strong> You plated 0.1 mL and got 45 colonies. So the concentration in the tube is 45 colonies / 0.1 mL = 450 CFU/mL.</div><div class="step"><strong>Step 2: Account for the dilution.</strong> This tube was a 10<sup>-4</sup> dilution of the stock. So the stock is 10<sup>4</sup> times more concentrated.</div><div class="step"><strong>Calculation:</strong><p><code>Stock Conc. = 450 CFU/mL &times; 10<sup>4</sup> = 4,500,000 CFU/mL = 4.5 &times; 10<sup>6</sup> CFU/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="3"><div class="step"><strong>Logic:</strong> Set up an equation to cancel units and leave you with CFU/mL of the original stock.</div><div class="step"><strong>Calculation:</strong><p><code>(45 CFU / 100 &micro;L plated) &times; (1000 &micro;L / 1 mL) &times; (10,000 / 1) = 4.5 &times; 10<sup>6</sup> CFU/mL</code></p><p>The (10,000 / 1) term represents the dilution factor, which is unitless.</p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">3. Your stock is ~2 &times; 10<sup>8</sup> CFU/mL. You want to plate 100 &micro;L and get between 30-300 colonies. Which dilution tube from a 1:10 serial dilution should you plate?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="3" data-method="1">Method 1: Target Concentration</button>
+                                <button class="method-tab" data-example="3" data-method="2">Method 2: Work Forwards</button>
+                                <button class="method-tab" data-example="3" data-method="3">Method 3: Formula Rearrangement</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="3" data-method="1"><div class="step"><strong>Step 1: Find the target concentration in the tube.</strong> To get 30-300 colonies from 0.1 mL, the tube concentration must be 300-3000 CFU/mL. (e.g., 30 colonies / 0.1 mL = 300 CFU/mL).</div><div class="step"><strong>Step 2: Find the required dilution factor.</strong><p><code>DF = Stock Conc. / Target Conc.</code></p><p><code>DF = (2&times;10<sup>8</sup>) / 300 = &approx;6.7&times;10<sup>5</sup></code></p><p><code>DF = (2&times;10<sup>8</sup>) / 3000 = &approx;6.7&times;10<sup>4</sup></code></p></div><div class="step"><strong>Conclusion:</strong> You need a dilution factor between 67,000 and 670,000. A 10<sup>-5</sup> (1-in-100,000) or 10<sup>-6</sup> (1-in-1,000,000) dilution would be appropriate. <code>The 10<sup>-5</sup> tube is the best choice.</code></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="2"><div class="step"><strong>Logic:</strong> Calculate the expected colony count from each dilution tube.</div><div class="step"><p><strong>10<sup>-4</sup> tube:</strong> Conc = 2&times;10<sup>4</sup> CFU/mL. Colonies = 2&times;10<sup>4</sup> &times; 0.1 = 2000 (Too many)</p><p><strong>10<sup>-5</sup> tube:</strong> Conc = 2&times;10<sup>3</sup> CFU/mL. Colonies = 2&times;10<sup>3</sup> &times; 0.1 = 200 (Good!)</p><p><strong>10<sup>-6</sup> tube:</strong> Conc = 2&times;10<sup>2</sup> CFU/mL. Colonies = 2&times;10<sup>2</sup> &times; 0.1 = 20 (A bit low, but acceptable)</p></div><div class="step"><strong>Conclusion:</strong> Plating from the <code>10<sup>-5</sup> dilution tube</code> is most likely to give a countable plate.</div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="3"><div class="step"><strong>Formula:</strong> DF = (Stock Conc. &times; Vol Plated) / Colonies</div><div class="step"><strong>Step 1: Calculate required DF for 30 colonies.</strong><p><code>DF = (2&times;10<sup>8</sup> CFU/mL &times; 0.1 mL) / 30 = 6.7&times;10<sup>5</sup></code></p></div><div class="step"><strong>Step 2: Calculate required DF for 300 colonies.</strong><p><code>DF = (2&times;10<sup>8</sup> CFU/mL &times; 0.1 mL) / 300 = 6.7&times;10<sup>4</sup></code></p></div><div class="step"><strong>Conclusion:</strong> You need a dilution factor between 67,000 (10<sup>4.8</sup>) and 670,000 (10<sup>5.8</sup>). The <code>10<sup>-5</sup> dilution</code> falls perfectly within this range.</div></div>
+                            </div>
+                        </div>
+                    </div>`,
+                mixingSolutions: `
+                    <div class="explanation-content">
+                        <h2>Mixing Solutions</h2>
+                        <p>When mixing two solutions containing the same solute, the final concentration is the weighted average of their individual concentrations. The key is to find the total amount of solute and divide by the total final volume.</p>
+                        <div class="formula">C<sub>final</sub> = (C1V1 + C2V2) / (V1 + V2)</div>
+                        <svg viewBox="0 0 500 220" class="explanation-svg" xmlns="http://www.w3.org/2000/svg">
+                            <style>.label{font-size:14px;fill:#333;text-anchor:middle}.title-label{font-weight:bold;font-size:16px}.formula-label{font-family:monospace;font-size:16px;fill:#003B66}.tube{stroke:#003B66;stroke-width:2;fill:#a7d7f9}.arrow{stroke:#E87722;fill:none;stroke-width:2;marker-end:url(#head2)}</style>
+                            <defs><marker id="head2" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#E87722"/></marker></defs>
+                            <text class="label title-label" x="75" y="25">Solution 1</text><rect class="tube" x="50" y="40" width="50" height="120" rx="5"/><text class="label formula-label" x="75" y="180">C1, V1</text>
+                            <text class="label title-label" x="225" y="25">Solution 2</text><rect class="tube" x="200" y="40" width="50" height="120" rx="5"/><text class="label formula-label" x="225" y="180">C2, V2</text>
+                            <path class="arrow" d="M105 100 C 150 60, 175 60, 200 100"/>
+                            <path class="arrow" d="M250 100 H 350"/>
+                            <text class="label title-label" x="425" y="25">Final Mix</text><rect class="tube" x="400" y="40" width="50" height="120" rx="5"/><text class="label formula-label" x="425" y="180">C_final, V_final</text>
+                        </svg>
+                        <h4>Worked Examples</h4>
+                        <div class="example">
+                            <p class="question">1. You mix 200 mL of a 5 M NaCl solution with 300 mL of a 2 M NaCl solution. What is the final molarity?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="1" data-method="1">Method 1: Weighted Average</button>
+                                <button class="method-tab" data-example="1" data-method="2">Method 2: Total Amount</button>
+                                <button class="method-tab" data-example="1" data-method="3">Method 3: Proportional Logic</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="1" data-method="1"><div class="step"><strong>Step 1: Identify all variables.</strong><p>C1=5M, V1=200mL=0.2L</p><p>C2=2M, V2=300mL=0.3L</p><p>V_final = 0.2L + 0.3L = 0.5L</p></div><div class="step"><strong>Step 2: Apply the formula.</strong><p><code>C_final = ((5M &times; 0.2L) + (2M &times; 0.3L)) / (0.5L)</code></p><p><code>C_final = (1 + 0.6) / 0.5 = 1.6 / 0.5 = 3.2 M</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="2"><div class="step"><strong>Step 1: Calculate total moles of solute.</strong><p>Moles from Sol 1: 5 mol/L &times; 0.2 L = 1.0 mol</p><p>Moles from Sol 2: 2 mol/L &times; 0.3 L = 0.6 mol</p><p>Total Moles = 1.0 + 0.6 = 1.6 mol</p></div><div class="step"><strong>Step 2: Calculate total volume.</strong><p>Total Volume = 0.2 L + 0.3 L = 0.5 L</p></div><div class="step"><strong>Step 3: Calculate final concentration.</strong><p><code>Final Molarity = Total Moles / Total Volume = 1.6 mol / 0.5 L = 3.2 M</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="3"><div class="step"><strong>Logic:</strong> The final concentration must be between 2M and 5M. Since we added more of the 2M solution (300mL) than the 5M solution (200mL), the final answer should be closer to 2M than 5M.</div><div class="step"><strong>Calculation:</strong> The total volume is 500mL. Solution 1 makes up 200/500 = 40% of the mix. Solution 2 makes up 300/500 = 60% of the mix.<p><code>Final Molarity = (40% &times; 5M) + (60% &times; 2M)</code></p><p><code>Final Molarity = (0.4 &times; 5) + (0.6 &times; 2) = 2.0 + 1.2 = 3.2 M</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">2. You add 50 mL of a 4 M stock solution to 150 mL of water. What is the final concentration?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="2" data-method="1">Method 1: Dilution Factor</button>
+                                <button class="method-tab" data-example="2" data-method="2">Method 2: Total Amount</button>
+                                <button class="method-tab" data-example="2" data-method="3">Method 3: C1V1+C2V2</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="2" data-method="1"><div class="step"><strong>Step 1: Find the total volume.</strong><p><code>V_final = 50 mL + 150 mL = 200 mL</code></p></div><div class="step"><strong>Step 2: Find the dilution factor.</strong> You are diluting 50 mL into a final volume of 200 mL. <p><code>DF = V_final / V_initial = 200 / 50 = 4</code>. This is a 1-in-4 dilution.</p></div><div class="step"><strong>Step 3: Calculate final concentration.</strong><p><code>C_final = C_initial / DF = 4 M / 4 = 1 M</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="2"><div class="step"><strong>Step 1: Calculate total moles of solute.</strong> The water adds no solute. All moles come from the stock.<p><code>Moles = 4 mol/L &times; 0.05 L = 0.2 mol</code></p></div><div class="step"><strong>Step 2: Calculate total volume.</strong><p><code>Total Volume = 0.05 L + 0.150 L = 0.2 L</code></p></div><div class="step"><strong>Step 3: Calculate final concentration.</strong><p><code>Final Molarity = Total Moles / Total Volume = 0.2 mol / 0.2 L = 1 M</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="3"><div class="step"><strong>Logic:</strong> Use the mixing formula, where water is "Solution 2" with a concentration of 0 M.</div><div class="step"><strong>Variables:</strong> C1=4M, V1=50mL. C2=0M, V2=150mL.</div><div class="step"><strong>Calculation:</strong><p><code>C_final = ((4M &times; 50mL) + (0M &times; 150mL)) / (50mL + 150mL)</code></p><p><code>C_final = (200) / (200) = 1 M</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">3. You have a 1 M stock and a 0.1 M stock. How much of the 1 M stock must you add to 100 mL of the 0.1 M stock to get a final concentration of 0.25 M?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="3" data-method="1">Method 1: Algebra</button>
+                                <button class="method-tab" data-example="3" data-method="2">Method 2: Pearson's Square</button>
+                                <button class="method-tab" data-example="3" data-method="3">Method 3: Amount Balance</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="3" data-method="1"><div class="step"><strong>Logic:</strong> Use the mixing formula, with the unknown volume V1.</div><div class="step"><strong>Formula:</strong> 0.25 = (1&times;V1 + 0.1&times;100) / (V1 + 100)</div><div class="step"><strong>Solve for V1:</strong><p><code>0.25(V1 + 100) = V1 + 10</code></p><p><code>0.25V1 + 25 = V1 + 10</code></p><p><code>15 = 0.75V1</code></p><p><code>V1 = 15 / 0.75 = 20 mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="2"><div class="step"><strong>Step 1: Set up the square.</strong> Write concentrations of stocks on left, desired concentration in middle. <p><code>1 M (stock) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.25 M &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.1 M (stock)</code></p></div><div class="step"><strong>Step 2: Subtract diagonally.</strong><p><code>|0.1 - 0.25| = 0.15 parts of the 1 M stock</code></p><p><code>|1 - 0.25| = 0.75 parts of the 0.1 M stock</code></p></div><div class="step"><strong>Step 3: Set up ratio.</strong> The ratio of 1M stock to 0.1M stock is 0.15 : 0.75, which simplifies to 1 : 5. <p><code>(Vol of 1M) / (Vol of 0.1M) = 1 / 5</code></p><p><code>V1 / 100mL = 1 / 5  => V1 = 20 mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="3"><div class="step"><strong>Logic:</strong> The amount of solute "gained" by the 0.1M solution must equal the amount of solute "lost" by the 1M solution upon mixing. Let V1 be the volume of 1M stock.</div><div class="step"><strong>Amount Gained:</strong> (0.25M - 0.1M) &times; 100mL = 15 mmol</div><div class="step"><strong>Amount Lost:</strong> (1M - 0.25M) &times; V1 = 0.75 &times; V1</div><div class="step"><strong>Balance and Solve:</strong><p><code>0.75 &times; V1 = 15</code></p><p><code>V1 = 15 / 0.75 = 20 mL</code></p></div></div>
+                            </div>
+                        </div>
+                    </div>`,
+                molarity: `
+                    <div class="explanation-content">
+                        <h2>Molarity & % Solutions</h2>
+                        <p>Molarity (M) is moles of solute per litre of solution. Percent solutions can be weight/volume (% w/v, g/100mL) or volume/volume (% v/v, mL/100mL). Molecular Weight (MW) in g/mol is used to convert between mass and moles.</p>
+                        <div class="formula">Molarity (M) = moles / Litre</div>
+                        <svg viewBox="0 0 500 200" class="explanation-svg" xmlns="http://www.w3.org/2000/svg">
+                            <style>.label{font-size:14px;fill:#333;text-anchor:middle}.title-label{font-weight:bold;font-size:16px}.formula-label{font-family:monospace;font-size:16px;fill:#003B66}.arrow{stroke:#E87722;fill:none;stroke-width:2;marker-end:url(#head2)}</style>
+                            <defs><marker id="head2" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#E87722"/></marker></defs>
+                            <text class="label title-label" x="100" y="40">Mass (g)</text><rect x="50" y="50" width="100" height="30" fill="#f0f8ff" stroke="#003B66"/>
+                            <text class="label" x="75" y="100">&divide; MW</text><path class="arrow" d="M100 80 v 30"/>
+                            <text class="label title-label" x="100" y="150">Moles (mol)</text>
+                            <path class="arrow" d="M180 95 H 280"/>
+                            <text class="label title-label" x="375" y="40">Volume (L)</text><path d="M350 50 L 360 140 H 390 L 400 50 Z" stroke="#003B66" stroke-width="2" fill="#a7d7f9"/>
+                            <text class="label formula-label" x="275" y="160">Molarity = Moles / Volume</text>
+                        </svg>
+                        <h4>Worked Examples</h4>
+                        <div class="example">
+                            <p class="question">1. How many grams of NaOH (MW = 40.0 g/mol) are needed to make 500 mL of a 0.2 M solution?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="1" data-method="1">Method 1: Combined Formula</button>
+                                <button class="method-tab" data-example="1" data-method="2">Method 2: Step-by-Step</button>
+                                <button class="method-tab" data-example="1" data-method="3">Method 3: Proportional Reasoning</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="1" data-method="1"><div class="step"><strong>Formula:</strong> mass = Molarity &times; Volume (L) &times; MW</div><div class="step"><strong>Step 1: Unify units.</strong> Volume = 500 mL = 0.5 L.</div><div class="step"><strong>Step 2: Calculate.</strong><p><code>mass = 0.2 mol/L &times; 0.5 L &times; 40.0 g/mol</code></p><p><code>mass = 4.0 g</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="2"><div class="step"><strong>Step 1: Find total moles needed.</strong><p><code>moles = Molarity &times; Volume (L) = 0.2 mol/L &times; 0.5 L = 0.1 mol</code></p></div><div class="step"><strong>Step 2: Convert moles to mass.</strong><p><code>mass = moles &times; MW = 0.1 mol &times; 40.0 g/mol = 4.0 g</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="3"><div class="step"><strong>Logic:</strong> A 1 M solution would require 40.0 g in 1 L. We need a 0.2 M solution, so we need 0.2 times the mass (0.2 &times; 40 = 8 g) in 1 L. But we are only making 500 mL (0.5 L), so we need half of that amount.</div><div class="step"><strong>Calculation:</strong><p><code>mass = (40.0 g/mol) &times; (0.2 mol/L) &times; (0.5 L) = 4.0 g</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">2. What is the molarity of a 10% (w/v) solution of CaCl₂ (MW = 111.0 g/mol)?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="2" data-method="1">Method 1: Definition-Based</button>
+                                <button class="method-tab" data-example="2" data-method="2">Method 2: Shortcut Formula</button>
+                                <button class="method-tab" data-example="2" data-method="3">Method 3: Unit Cancellation</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="2" data-method="1"><div class="step"><strong>Step 1: Define % (w/v).</strong> 10% (w/v) means 10 g of solute in 100 mL of solution.</div><div class="step"><strong>Step 2: Convert mass to moles.</strong><p><code>moles = mass / MW = 10 g / 111.0 g/mol = 0.090 mol</code></p></div><div class="step"><strong>Step 3: Convert volume to Litres.</strong> 100 mL = 0.1 L.</div><div class="step"><strong>Step 4: Calculate Molarity.</strong><p><code>M = moles / L = 0.090 mol / 0.1 L = 0.90 M</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="2"><div class="step"><strong>Formula:</strong> Molarity = (%w/v &times; 10) / MW</div><div class="step"><strong>Calculation:</strong><p><code>M = (10 &times; 10) / 111.0 = 100 / 111.0 = 0.90 M</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="3"><div class="step"><strong>Logic:</strong> Start with the definition of the % solution and use conversion factors to arrive at mol/L.</div><div class="step"><strong>Calculation:</strong><p><code>(10 <s>g</s> / 100 <s>mL</s>) &times; (1 mol / 111.0 <s>g</s>) &times; (1000 <s>mL</s> / 1 L) = 0.90 mol/L</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">3. How would you prepare 500 mL of 70% (v/v) ethanol from a 95% (v/v) stock?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="3" data-method="1">Method 1: C1V1=C2V2</button>
+                                <button class="method-tab" data-example="3" data-method="2">Method 2: Total Amount</button>
+                                <button class="method-tab" data-example="3" data-method="3">Method 3: Dilution Factor</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="3" data-method="1"><div class="step"><strong>Logic:</strong> Treat the percentages as concentrations.</div><div class="step"><strong>Variables:</strong> C1=95%, V1=?, C2=70%, V2=500mL.</div><div class="step"><strong>Calculate V1:</strong><p><code>V1 = (C2 &times; V2) / C1 = (70% &times; 500mL) / 95% = 368.4 mL</code></p></div><div class="step"><strong>Preparation:</strong> Measure <code>368.4 mL</code> of 95% ethanol and add diluent (water) up to a total volume of <code>500 mL</code>.</div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="2"><div class="step"><strong>Step 1: Find total amount of pure ethanol needed.</strong><p><code>Amount = 70% of 500 mL = 0.70 &times; 500 mL = 350 mL of pure ethanol</code></p></div><div class="step"><strong>Step 2: Find volume of stock that contains this amount.</strong> The stock is 95% pure. <p><code>Volume of Stock = Amount needed / Stock Purity = 350 mL / 0.95 = 368.4 mL</code></p></div><div class="step"><strong>Preparation:</strong> Measure <code>368.4 mL</code> of 95% ethanol and add diluent up to <code>500 mL</code>.</div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="3"><div class="step"><strong>Step 1: Find the dilution factor.</strong><p><code>DF = C1 / C2 = 95 / 70 = 1.357</code></p></div><div class="step"><strong>Step 2: Calculate the volume of stock needed.</strong><p><code>V1 = V2 / DF = 500 mL / 1.357 = 368.4 mL</code></p></div><div class="step"><strong>Preparation:</strong> Measure <code>368.4 mL</code> of 95% ethanol and add diluent up to <code>500 mL</code>.</div></div>
+                            </div>
+                        </div>
+                    </div>`,
+                absorbance: `
+                    <div class="explanation-content">
+                        <h2>Absorbance</h2>
+                        <p>Absorbance measures how much light is absorbed by a sample. The Beer-Lambert Law states that absorbance is directly proportional to the concentration of the analyte and the path length of the light through the sample.</p>
+                        <div class="formula">A = &epsilon;cl</div>
+                        <svg viewBox="0 0 500 180" class="explanation-svg" xmlns="http://www.w3.org/2000/svg">
+                            <style>.label{font-size:14px;fill:#333;text-anchor:middle}.formula-label{font-family:monospace;font-size:16px;fill:#003B66}.arrow{stroke:#003B66;fill:none;stroke-width:2;marker-end:url(#head2)}</style>
+                            <defs><marker id="head2" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#003B66"/></marker></defs>
+                            <text class="label" x="50" y="60">Light Source</text><path class="arrow" d="M100 80 H 180"/>
+                            <text class="label" x="140" y="70">I<tspan dy="5" font-size="0.8em">0</tspan></text>
+                            <text class="label" x="250" y="40">Cuvette (l=1cm)</text><rect x="225" y="50" width="50" height="80" stroke="#003B66" fill="#a7d7f9"/>
+                            <text class="label formula-label" x="250" y="150">Concentration (c)</text>
+                            <path class="arrow" d="M275 80 H 350"/><text class="label" x="315" y="70">I</text>
+                            <text class="label" x="400" y="60">Detector</text>
+                            <text class="label" x="250" y="170">A = log(I<tspan dy="5" font-size="0.8em">0</tspan>/I) = &epsilon;cl</text>
+                        </svg>
+                        <h4>Worked Examples</h4>
+                        <div class="example">
+                            <p class="question">1. A solution of NADH has an absorbance of 0.55 at 340 nm. Given the molar extinction coefficient (&epsilon;) for NADH is 6220 M<sup>-1</sup>cm<sup>-1</sup> and the path length (l) is 1 cm, what is the concentration in &micro;M?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="1" data-method="1">Method 1: Rearranged Formula</button>
+                                <button class="method-tab" data-example="1" data-method="2">Method 2: Unit Cancellation</button>
+                                <button class="method-tab" data-example="1" data-method="3">Method 3: Proportional Reasoning</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="1" data-method="1"><div class="step"><strong>Formula:</strong> c = A / (&epsilon; &times; l)</div><div class="step"><strong>Calculation:</strong><p><code>c = 0.55 / (6220 M<sup>-1</sup>cm<sup>-1</sup> &times; 1 cm) = 0.0000884 M</code></p></div><div class="step"><strong>Convert to &micro;M:</strong><p><code>0.0000884 M &times; (1,000,000 &micro;M / 1 M) = 88.4 &micro;M</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="2"><div class="step"><strong>Logic:</strong> The units of &epsilon; are M<sup>-1</sup>cm<sup>-1</sup>, which is the same as L/(mol&middot;cm). We can arrange the equation to cancel units and leave mol/L (Molarity).</div><div class="step"><strong>Calculation:</strong><p><code>c = 0.55 (A) &times; (1 / 1 cm) &times; (1 / 6220 M<sup>-1</sup>cm<sup>-1</sup>) = 0.0000884 M</code></p><p><code>0.0000884 mol/L = 88.4 &micro;mol/L = 88.4 &micro;M</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="3"><div class="step"><strong>Logic:</strong> A 1 M solution would give an absorbance of 6220. Our absorbance is 0.55. What fraction of 1 M is our concentration?</div><div class="step"><strong>Calculation:</strong><p><code>Fraction = 0.55 / 6220 = 0.0000884</code></p><p><code>Concentration = 1 M &times; 0.0000884 = 0.0000884 M = 88.4 &micro;M</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">2. What is the expected absorbance of a 150 &micro;M solution of NADH, using the same parameters as Example 1 (&epsilon; = 6220 M<sup>-1</sup>cm<sup>-1</sup>, l = 1 cm)?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="2" data-method="1">Method 1: Direct Formula</button>
+                                <button class="method-tab" data-example="2" data-method="2">Method 2: Unit Cancellation</button>
+                                <button class="method-tab" data-example="2" data-method="3">Method 3: Proportional Reasoning</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="2" data-method="1"><div class="step"><strong>Formula:</strong> A = &epsilon; &times; c &times; l</div><div class="step"><strong>Step 1: Unify Units.</strong> Convert concentration from &micro;M to M.<p><code>150 &micro;M = 0.000150 M</code></p></div><div class="step"><strong>Step 2: Calculate.</strong><p><code>A = (6220 M<sup>-1</sup>cm<sup>-1</sup>) &times; (0.000150 M) &times; (1 cm) = 0.933</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="2"><div class="step"><strong>Logic:</strong> Arrange the values so that Molarity (mol/L) and cm cancel, leaving a unitless value for Absorbance.</div><div class="step"><strong>Calculation:</strong><p><code>A = (6220 L/mol&middot;<s>cm</s>) &times; (0.000150 <s>mol</s>/<s>L</s>) &times; (1 <s>cm</s>) = 0.933</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="3"><div class="step"><strong>Logic:</strong> A 1 M solution gives an absorbance of 6220. We have a 0.000150 M solution. The absorbance should be that fraction of 6220.</div><div class="step"><strong>Calculation:</strong><p><code>Absorbance = 6220 &times; 0.000150 = 0.933</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">3. You have a 1 mM stock solution of a compound. You dilute it 1-in-10 and measure the absorbance as 0.4 in a 1 cm cuvette. What is the molar extinction coefficient (&epsilon;)?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="3" data-method="1">Method 1: Rearranged Formula</button>
+                                <button class="method-tab" data-example="3" data-method="2">Method 2: Step-by-Step</button>
+                                <button class="method-tab" data-example="3" data-method="3">Method 3: Unit Analysis</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="3" data-method="1"><div class="step"><strong>Formula:</strong> &epsilon; = A / (c &times; l)</div><div class="step"><strong>Step 1: Find final concentration (c).</strong><p><code>Stock = 1 mM = 0.001 M</code></p><p><code>c = 0.001 M / 10 = 0.0001 M</code></p></div><div class="step"><strong>Step 2: Calculate &epsilon;.</strong><p><code>&epsilon; = 0.4 / (0.0001 M &times; 1 cm) = 4000 M<sup>-1</sup>cm<sup>-1</sup></code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="2"><div class="step"><strong>Step 1: Find concentration in the cuvette.</strong> The stock is 1 mM. A 1-in-10 dilution gives a final concentration of 0.1 mM.</div><div class="step"><strong>Step 2: Convert concentration to Molarity.</strong><p><code>c = 0.1 mM = 0.0001 M</code></p></div><div class="step"><strong>Step 3: Solve for &epsilon;.</strong><p><code>0.4 = &epsilon; &times; (0.0001 M) &times; (1 cm)</code></p><p><code>&epsilon; = 0.4 / 0.0001 = 4000 M<sup>-1</sup>cm<sup>-1</sup></code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="3"><div class="step"><strong>Logic:</strong> The units for &epsilon; are M<sup>-1</sup>cm<sup>-1</sup>. We need to arrange our known values (A, c, l) to produce these units.</div><div class="step"><strong>Calculation:</strong><p><code>&epsilon; = A / c / l = (unitless) / (mol/L) / (cm) = L / (mol &times; cm)</code></p><p>This is the same as M<sup>-1</sup>cm<sup>-1</sup>.</p><p><code>&epsilon; = 0.4 / 0.0001 M / 1 cm = 4000 M<sup>-1</sup>cm<sup>-1</sup></code></p></div></div>
+                            </div>
+                        </div>
+                    </div>`,
+                buffers: `
+                    <div class="explanation-content">
+                        <h2>Buffers & pH</h2>
+                        <p>A buffer resists changes in pH. Its pH can be calculated using the Henderson-Hasselbalch equation, which relates pH, the pKa of the weak acid, and the ratio of the conjugate base [A<sup>-</sup>] to the weak acid [HA].</p>
+                        <div class="formula">pH = pKa + log([A<sup>-</sup>]/[HA])</div>
+                        <svg viewBox="0 0 500 200" class="explanation-svg" xmlns="http://www.w3.org/2000/svg">
+                            <style>.label{font-size:14px;fill:#333;text-anchor:middle}.formula-label{font-family:monospace;font-size:16px;fill:#003B66}.arrow{stroke:#E87722;fill:none;stroke-width:2;marker-end:url(#head2);marker-start:url(#tail2)}</style>
+                            <defs><marker id="head2" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#E87722"/></marker><marker id="tail2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#E87722"/></marker></defs>
+                            <text class="label" x="150" y="60">Add Acid (H<tspan dy="-5" font-size="0.8em">+</tspan>)</text><path d="M150 70 v 20" stroke="#E87722" stroke-width="2" marker-end="url(#head2)"/>
+                            <text class="label" x="350" y="60">Add Base (OH<tspan dy="-5" font-size="0.8em">-</tspan>)</text><path d="M350 70 v 20" stroke="#E87722" stroke-width="2" marker-end="url(#head2)"/>
+                            <rect x="100" y="100" width="300" height="60" rx="10" fill="#a7d7f9" stroke="#003B66"/>
+                            <text class="label formula-label" x="170" y="135">HA</text>
+                            <path class="arrow" d="M220 130 H 280"/>
+                            <text class="label formula-label" x="330" y="135">A<tspan dy="-5" font-size="0.8em">-</tspan> + H<tspan dy="-5" font-size="0.8em">+</tspan></text>
+                            <text class="label" x="250" y="175">pH remains stable</text>
+                        </svg>
+                        <h4>Worked Examples</h4>
+                        <div class="example">
+                            <p class="question">1. A buffer is made with 0.1 M acetic acid (HA) and 0.2 M sodium acetate (A<sup>-</sup>). The pKa of acetic acid is 4.76. What is the pH?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="1" data-method="1">Method 1: H-H Equation</button>
+                                <button class="method-tab" data-example="1" data-method="2">Method 2: Step-by-Step</button>
+                                <button class="method-tab" data-example="1" data-method="3">Method 3: Conceptual Check</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="1" data-method="1"><div class="step"><strong>Formula:</strong> pH = pKa + log([A<sup>-</sup>]/[HA])</div><div class="step"><strong>Calculation:</strong><p><code>pH = 4.76 + log(0.2 / 0.1)</code></p><p><code>pH = 4.76 + log(2)</code></p><p><code>pH = 4.76 + 0.301 = 5.06</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="2"><div class="step"><strong>Step 1: Calculate the ratio.</strong><p><code>Ratio = [A<sup>-</sup>]/[HA] = 0.2 / 0.1 = 2</code></p></div><div class="step"><strong>Step 2: Take the logarithm of the ratio.</strong><p><code>log(2) = 0.301</code></p></div><div class="step"><strong>Step 3: Add this value to the pKa.</strong><p><code>pH = 4.76 + 0.301 = 5.06</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="3"><div class="step"><strong>Logic:</strong> There is more conjugate base ([A<sup>-</sup>]) than weak acid ([HA]). Therefore, the buffer will be more basic than the pKa. The pH must be greater than 4.76.</div><div class="step"><strong>Check:</strong> The calculated pH of 5.06 is indeed greater than 4.76, so the answer is reasonable. This method is good for quickly checking if your calculation is in the right ballpark.</div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">2. You need to make a pH 7.0 buffer using a weak acid with a pKa of 7.2. What ratio of [A<sup>-</sup>]/[HA] is required?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="2" data-method="1">Method 1: Rearrange H-H</button>
+                                <button class="method-tab" data-example="2" data-method="2">Method 2: Step-by-Step Algebra</button>
+                                <button class="method-tab" data-example="2" data-method="3">Method 3: Conceptual Check</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="2" data-method="1"><div class="step"><strong>Formula:</strong> [A<sup>-</sup>]/[HA] = 10<sup>(pH - pKa)</sup></div><div class="step"><strong>Calculation:</strong><p><code>Ratio = 10<sup>(7.0 - 7.2)</sup></code></p><p><code>Ratio = 10<sup>-0.2</sup> = 0.631</code></p></div><div class="step"><strong>Conclusion:</strong> You need a ratio of 0.631 parts [A<sup>-</sup>] to 1 part [HA].</div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="2"><div class="step"><strong>Step 1: Set up H-H equation.</strong><p><code>7.0 = 7.2 + log(Ratio)</code></p></div><div class="step"><strong>Step 2: Isolate the log term.</strong><p><code>7.0 - 7.2 = log(Ratio)</code></p><p><code>-0.2 = log(Ratio)</code></p></div><div class="step"><strong>Step 3: Solve for Ratio by taking the antilog (10<sup>x</sup>).</strong><p><code>Ratio = 10<sup>-0.2</sup> = 0.631</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="3"><div class="step"><strong>Logic:</strong> The desired pH (7.0) is lower (more acidic) than the pKa (7.2). To make the buffer more acidic, we must have more of the acidic form [HA] than the basic form [A<sup>-</sup>].</div><div class="step"><strong>Conclusion:</strong> The ratio [A<sup>-</sup>]/[HA] must be less than 1. Our calculated answer of 0.631 matches this expectation.</div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">3. You have 1 L of the buffer from Ex. 1 (0.1 M HA, 0.2 M A<sup>-</sup>). What is the new pH after adding 1 mL of 1 M HCl?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="3" data-method="1">Method 1: Moles Calculation</button>
+                                <button class="method-tab" data-example="3" data-method="2">Method 2: Concentration Change</button>
+                                <button class="method-tab" data-example="3" data-method="3">Method 3: Conceptual Check</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="3" data-method="1"><div class="step"><strong>Step 1: Calculate initial moles.</strong><p><code>Moles HA = 0.1 M &times; 1 L = 0.1 mol</code></p><p><code>Moles A<sup>-</sup> = 0.2 M &times; 1 L = 0.2 mol</code></p></div><div class="step"><strong>Step 2: Calculate moles of H<sup>+</sup> added.</strong><p><code>Moles H<sup>+</sup> = 1 M &times; 0.001 L = 0.001 mol</code></p></div><div class="step"><strong>Step 3: Calculate new moles.</strong> The added H<sup>+</sup> converts A<sup>-</sup> to HA.<p><code>New Moles HA = 0.1 + 0.001 = 0.101 mol</code></p><p><code>New Moles A<sup>-</sup> = 0.2 - 0.001 = 0.199 mol</code></p></div><div class="step"><strong>Step 4: Calculate new pH.</strong> New volume is 1.001 L, but this small change is often ignored. The ratio of moles is the same as the ratio of concentrations.<p><code>pH = 4.76 + log(0.199 / 0.101) = 4.76 + log(1.97) = 4.76 + 0.29 = 5.05</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="2"><div class="step"><strong>Logic:</strong> We can approximate by calculating the change in concentration. The added HCl is diluted into 1L.</div><div class="step"><strong>Change in Conc:</strong> The added [H<sup>+</sup>] is 0.001 mol / 1 L = 0.001 M.</div><div class="step"><strong>New Concentrations:</strong><p><code>New [HA] = 0.1 + 0.001 = 0.101 M</code></p><p><code>New [A<sup>-</sup>] = 0.2 - 0.001 = 0.199 M</code></p></div><div class="step"><strong>New pH:</strong><p><code>pH = 4.76 + log(0.199 / 0.101) = 5.05</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="3"><div class="step"><strong>Logic:</strong> We started at pH 5.06. We added a strong acid (HCl). Therefore, the pH must decrease.</div><div class="step"><strong>Check:</strong> The new pH is 5.05. This is a very small decrease, which is what we expect from a buffer. The calculation is reasonable. If we had added the same amount of acid to pure water, the pH would have dropped from 7 to 3.</div></div>
+                            </div>
+                        </div>
+                    </div>`,
+                standardCurves: `
+                    <div class="explanation-content">
+                        <h2>Standard Curves & Graphing</h2>
+                        <p>A standard curve is a graph of a known property (e.g., absorbance) versus the concentration of a set of known samples ("standards"). By fitting a line to these points, you can determine the concentration of an unknown sample by measuring its property.</p>
+                        <div class="formula">y = mx + c</div>
+                        <svg viewBox="0 0 500 250" class="explanation-svg" xmlns="http://www.w3.org/2000/svg">
+                            <style>.label{font-size:12px;fill:#333}.axis-label{font-size:14px;text-anchor:middle}.point{fill:#005A9C}.line{stroke:#E87722;stroke-width:2}.interp{stroke:#003B66;stroke-dasharray:4}</style>
+                            <path d="M50 200 L 450 200" stroke="#333" stroke-width="2"/><text class="axis-label" x="250" y="220">Concentration (e.g., &micro;g/mL)</text>
+                            <path d="M50 200 L 50 20" stroke="#333" stroke-width="2"/><text class="axis-label" transform="translate(20 120) rotate(-90)">Absorbance (nm)</text>
+                            <circle class="point" cx="100" cy="160" r="4"/><circle class="point" cx="175" cy="120" r="4"/><circle class="point" cx="250" cy="80" r="4"/><circle class="point" cx="325" cy="40" r="4"/>
+                            <line class="line" x1="80" y1="171" x2="325" y2="40"/>
+                            <path class="interp" d="M50 100 h 212.5"/><path class="interp" d="M262.5 100 v 100"/>
+                            <text class="label" x="275" y="155">Unknown concentration</text><text class="label" x="75" y="85">Unknown absorbance</text>
+                        </svg>
+                        <h4>Worked Examples</h4>
+                        <div class="example">
+                            <p class="question">1. A standard curve for protein concentration gives a line of best fit: <code>y = 0.05x + 0.02</code>, where y is absorbance and x is concentration in &micro;g/mL. An unknown sample has an absorbance of 0.42. What is its concentration?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="1" data-method="1">Method 1: Rearrange Formula</button>
+                                <button class="method-tab" data-example="1" data-method="2">Method 2: Step-by-Step Algebra</button>
+                                <button class="method-tab" data-example="1" data-method="3">Method 3: Conceptual</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="1" data-method="1"><div class="step"><strong>Formula:</strong> x = (y - c) / m</div><div class="step"><strong>Identify variables:</strong> y=0.42, m=0.05, c=0.02.</div><div class="step"><strong>Calculate:</strong><p><code>x = (0.42 - 0.02) / 0.05</code></p><p><code>x = 0.40 / 0.05 = 8.0 &micro;g/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="2"><div class="step"><strong>Step 1: Substitute y into the equation.</strong><p><code>0.42 = 0.05x + 0.02</code></p></div><div class="step"><strong>Step 2: Subtract the y-intercept (c) from both sides.</strong><p><code>0.42 - 0.02 = 0.05x</code></p><p><code>0.40 = 0.05x</code></p></div><div class="step"><strong>Step 3: Divide by the slope (m) to solve for x.</strong><p><code>x = 0.40 / 0.05 = 8.0 &micro;g/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="1" data-method="3"><div class="step"><strong>Logic:</strong> First, correct for the blank/background absorbance (the y-intercept, c). This gives the "true" absorbance from the protein itself.</div><div class="step"><strong>Corrected Absorbance:</strong> 0.42 - 0.02 = 0.40.</div><div class="step"><strong>Logic:</strong> The slope (m=0.05) means that for every 1 &micro;g/mL of protein, the absorbance increases by 0.05. How many "steps" of 0.05 are in our corrected absorbance of 0.40?</div><div class="step"><strong>Calculation:</strong><p><code>Concentration = Corrected Absorbance / Slope = 0.40 / 0.05 = 8.0 &micro;g/mL</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">2. Using the same standard curve (<code>y = 0.05x + 0.02</code>), what is the expected absorbance for a standard with a concentration of 12 &micro;g/mL?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="2" data-method="1">Method 1: Direct Formula</button>
+                                <button class="method-tab" data-example="2" data-method="2">Method 2: Step-by-Step</button>
+                                <button class="method-tab" data-example="2" data-method="3">Method 3: Conceptual</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="2" data-method="1"><div class="step"><strong>Formula:</strong> y = mx + c</div><div class="step"><strong>Identify variables:</strong> x=12, m=0.05, c=0.02.</div><div class="step"><strong>Calculate:</strong><p><code>y = (0.05 &times; 12) + 0.02</code></p><p><code>y = 0.60 + 0.02 = 0.62</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="2"><div class="step"><strong>Step 1: Calculate the absorbance from the slope.</strong> This is the absorbance relative to the blank.<p><code>Absorbance (from slope) = 0.05 &times; 12 = 0.60</code></p></div><div class="step"><strong>Step 2: Add the y-intercept (blank value).</strong> The final reading includes the background absorbance.<p><code>Total Absorbance = 0.60 + 0.02 = 0.62</code></p></div></div>
+                                <div class="method-solution hidden" data-example="2" data-method="3"><div class="step"><strong>Logic:</strong> The curve starts at 0.02 (the blank). The slope means absorbance increases by 0.05 for every 1 &micro;g/mL.</div><div class="step"><strong>Calculate increase:</strong> For 12 &micro;g/mL, the increase is <code>12 &times; 0.05 = 0.60</code>.</div><div class="step"><strong>Add base value:</strong> The final absorbance is the starting value plus the increase.<p><code>y = 0.02 + 0.60 = 0.62</code></p></div></div>
+                            </div>
+                        </div>
+                        <div class="example">
+                            <p class="question">3. You dilute an unknown sample 1-in-5, then measure its absorbance as 0.32. Using the curve <code>y = 0.05x + 0.02</code>, what is the concentration of the original, undiluted sample?</p>
+                            <div class="method-tabs">
+                                <button class="method-tab active" data-example="3" data-method="1">Method 1: Two-Step Calculation</button>
+                                <button class="method-tab" data-example="3" data-method="2">Method 2: Formula First</button>
+                                <button class="method-tab" data-example="3" data-method="3">Method 3: Combined Logic</button>
+                            </div>
+                            <div class="method-content">
+                                <div class="method-solution" data-example="3" data-method="1"><div class="step"><strong>Step 1: Find the concentration of the DILUTED sample.</strong> This is the sample that was actually measured.<p><code>x_diluted = (y - c) / m = (0.32 - 0.02) / 0.05 = 6.0 &micro;g/mL</code></p></div><div class="step"><strong>Step 2: Account for the dilution.</strong> The original sample was 5 times more concentrated.<p><code>x_original = x_diluted &times; Dilution Factor</code></p><p><code>x_original = 6.0 &micro;g/mL &times; 5 = 30 &micro;g/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="2"><div class="step"><strong>Step 1: Use the formula to find the concentration in the cuvette.</strong><p><code>x = (0.32 - 0.02) / 0.05 = 6.0 &micro;g/mL</code></p></div><div class="step"><strong>Step 2: Apply the dilution factor.</strong> Since the original sample was diluted to get this value, we must multiply to find the original concentration.<p><code>Original Concentration = 6.0 &micro;g/mL &times; 5 = 30 &micro;g/mL</code></p></div></div>
+                                <div class="method-solution hidden" data-example="3" data-method="3"><div class="step"><strong>Logic:</strong> The machine "sees" a concentration of <code>(0.32 - 0.02) / 0.05 = 6.0 &micro;g/mL</code>.</div><div class="step"><strong>Realization:</strong> We know this measured sample was created by taking the original and making it 5 times less concentrated.</div><div class="step"><strong>Conclusion:</strong> To find the original concentration, we must reverse this process by multiplying by 5.<p><code>Original = 6.0 &micro;g/mL &times; 5 = 30 &micro;g/mL</code></p></div></div>
+                            </div>
+                        </div>
+                    </div>`
+            };
+            
+            const quizQuestions = {
+                unitConversions: {
+                    easy: [
+                        { q: "How many milligrams (mg) are in 2.5 grams (g)?", o: ["25 mg", "250 mg", "2500 mg", "0.025 mg"], a: "2500 mg", e: "To go from a big unit (g) to a smaller one (mg), you multiply by 1000. 2.5 &times; 1000 = 2500." },
+                        { q: "Convert 500 microlitres (&micro;L) to millilitres (mL).", o: ["5 mL", "0.5 mL", "50 mL", "0.05 mL"], a: "0.5 mL", e: "To go from a small unit (&micro;L) to a bigger one (mL), you divide by 1000. 500 / 1000 = 0.5." }
+                    ],
+                    medium: [
+                        { q: "How many micrograms (&micro;g) are in 0.04 grams (g)?", o: ["400 &micro;g", "4,000 &micro;g", "40,000 &micro;g", "400,000 &micro;g"], a: "40,000 &micro;g", e: "Go from g -> mg -> &micro;g. This is two steps down the ladder, so multiply by 1000 twice. 0.04 &times; 1000 &times; 1000 = 40,000." },
+                        { q: "A solution has a concentration of 2 g/L. What is this in mg/mL?", o: ["2 mg/mL", "20 mg/mL", "0.2 mg/mL", "200 mg/mL"], a: "2 mg/mL", e: "The units g/L and mg/mL are equivalent because both the numerator and denominator change by a factor of 1000. So, 2 g/L = 2 mg/mL." }
+                    ],
+                    hard: [
+                        { q: "Convert a concentration of 50 ng/&micro;L to mg/mL.", o: ["0.5 mg/mL", "5 mg/mL", "0.05 mg/mL", "50 mg/mL"], a: "0.05 mg/mL", e: "50 ng/&micro;L is the same as 50,000 ng/mL. Then convert ng to mg (divide by 1,000,000). 50,000 / 1,000,000 = 0.05 mg/mL." },
+                        { q: "A pump flows at 300 &micro;L/minute. How many millilitres does it pump in one hour?", o: ["1.8 mL", "18 mL", "180 mL", "0.18 mL"], a: "18 mL", e: "First, find total &micro;L per hour: 300 &micro;L/min &times; 60 min/hr = 18,000 &micro;L/hr. Then convert &micro;L to mL: 18,000 / 1000 = 18 mL." }
+                    ]
+                },
+                totalAmounts: {
+                    easy: [
+                        { q: "You have 2 L of a 5 g/L solution. How many grams of solute are present?", o: ["2.5 g", "10 g", "7 g", "0.4 g"], a: "10 g", e: "Amount = Concentration &times; Volume. 5 g/L &times; 2 L = 10 g." },
+                        { q: "How many moles are in 0.5 L of a 2 M solution?", o: ["1 mole", "2 moles", "0.5 moles", "4 moles"], a: "1 mole", e: "Moles = Molarity &times; Litres. 2 mol/L &times; 0.5 L = 1 mole." }
+                    ],
+                    medium: [
+                        { q: "How many milligrams of NaCl are in 200 mL of a 5 g/L solution?", o: ["1000 mg", "100 mg", "200 mg", "500 mg"], a: "1000 mg", e: "First, convert volume to L: 200 mL = 0.2 L. Amount (g) = 5 g/L &times; 0.2 L = 1 g. Convert to mg: 1 g = 1000 mg." },
+                        { q: "You need 25 &micro;g of DNA. Your stock is 10 &micro;g/&micro;L. What volume do you need?", o: ["0.4 &micro;L", "2.5 &micro;L", "25 &micro;L", "250 &micro;L"], a: "2.5 &micro;L", e: "Volume = Amount / Concentration. 25 &micro;g / 10 &micro;g/&micro;L = 2.5 &micro;L." }
+                    ],
+                    hard: [
+                        { q: "You dissolve 2.92 g of NaCl (MW: 58.44 g/mol) in water to a final volume of 50 mL. What is the Molarity?", o: ["0.1 M", "0.5 M", "1.0 M", "2.0 M"], a: "1.0 M", e: "Moles = 2.92 g / 58.44 g/mol &approx; 0.05 mol. Volume = 50 mL = 0.05 L. Molarity = 0.05 mol / 0.05 L = 1.0 M." },
+                        { q: "What volume of a 2 M stock solution is needed to get 0.5 moles of solute?", o: ["100 mL", "250 mL", "500 mL", "1 L"], a: "250 mL", e: "Volume = Moles / Molarity. Volume = 0.5 mol / 2 mol/L = 0.25 L. Convert to mL: 0.25 L = 250 mL." }
+                    ]
+                },
+                simpleDilutions: {
+                    easy: [
+                        { q: "You dilute a 10 M stock solution 1-in-10. What is the final concentration?", o: ["10 M", "1 M", "0.1 M", "100 M"], a: "1 M", e: "A 1-in-10 dilution reduces the concentration by a factor of 10. 10 M / 10 = 1 M." },
+                        { q: "You add 1 mL of stock to 9 mL of diluent. What is the dilution ratio?", o: ["1:9", "1:10", "1:1", "1:100"], a: "1:9", e: "A dilution ratio compares the parts of stock to the parts of diluent. In this case, it's 1 part stock to 9 parts diluent, written as 1:9. This creates a final 1-in-10 dilution (a dilution factor of 10)." }
+                    ],
+                    medium: [
+                        { q: "You need to make 500 &micro;L of a 2 M solution from a 10 M stock. How much stock do you need?", o: ["50 &micro;L", "100 &micro;L", "200 &micro;L", "250 &micro;L"], a: "100 &micro;L", e: "Using C1V1=C2V2: (10 M)(V1) = (2 M)(500 &micro;L). V1 = (2 &times; 500) / 10 = 100 &micro;L." },
+                        { q: "If you add 50 &micro;L of a 1 mg/mL stock to 450 &micro;L of water, what is the final concentration?", o: ["0.1 mg/mL", "1 mg/mL", "0.5 mg/mL", "0.2 mg/mL"], a: "0.1 mg/mL", e: "The dilution factor is 50 &micro;L / (50 + 450) &micro;L = 50/500 = 1/10. The final concentration is 1 mg/mL / 10 = 0.1 mg/mL." }
+                    ],
+                    hard: [
+                        { q: "How do you prepare 25 mL of a 0.5 M solution from a 4 M stock?", o: ["3.125 mL stock + 21.875 mL water", "5 mL stock + 20 mL water", "6.25 mL stock + 18.75 mL water", "2.5 mL stock + 22.5 mL water"], a: "3.125 mL stock + 21.875 mL water", e: "V1 = (C2V2)/C1 = (0.5 &times; 25)/4 = 3.125 mL stock. Diluent = 25 - 3.125 = 21.875 mL." }
+                    ]
+                },
+                serialDilutions: {
+                    easy: [
+                        { q: "You make two consecutive 1:10 dilutions. What is the total dilution factor?", o: ["20", "100", "200", "1000"], a: "100", e: "Total dilution is the product of individual dilutions: 10 &times; 10 = 100." },
+                        { q: "A stock of 2&times;10<sup>8</sup> cells/mL is diluted 1:100. What is the new concentration?", o: ["2&times;10<sup>10</sup>", "2&times;10<sup>7</sup>", "2&times;10<sup>6</sup>", "2&times;10<sup>5</sup>"], a: "2&times;10<sup>6</sup>", e: "New concentration = Original concentration / Dilution Factor. (2&times;10<sup>8</sup>) / 100 = 2&times;10<sup>6</sup>." }
+                    ],
+                    medium: [
+                        { q: "You plate 100 &micro;L from a 10<sup>-5</sup> dilution tube and get 50 colonies. What was the stock concentration in CFU/mL?", o: ["5&times;10<sup>5</sup>", "5&times;10<sup>6</sup>", "5&times;10<sup>7</sup>", "5&times;10<sup>8</sup>"], a: "5&times;10<sup>7</sup>", e: "CFU/mL = (Colonies &times; DF) / Vol(mL) = (50 &times; 10<sup>5</sup>) / 0.1 = 50 &times; 10<sup>6</sup> = 5&times;10<sup>7</sup>." },
+                        { q: "You do four 1:10 serial dilutions starting with a 5 M stock. What is the concentration in the third tube?", o: ["5&times;10<sup>-1</sup> M", "5&times;10<sup>-2</sup> M", "5&times;10<sup>-3</sup> M", "5&times;10<sup>-4</sup> M"], a: "5&times;10<sup>-3</sup> M", e: "Tube 1 is 10<sup>-1</sup>, Tube 2 is 10<sup>-2</sup>, Tube 3 is 10<sup>-3</sup>. The concentration is 5 M / 1000 = 0.005 M or 5&times;10<sup>-3</sup> M." }
+                    ],
+                    hard: [
+                        { q: "Stock is ~1&times;10<sup>9</sup> CFU/mL. To get ~100 colonies by plating 100 &micro;L, which dilution tube should you use?", o: ["10<sup>-4</sup>", "10<sup>-5</sup>", "10<sup>-6</sup>", "10<sup>-7</sup>"], a: "10<sup>-6</sup>", e: "Target conc. for plating is 100 colonies / 0.1 mL = 1000 CFU/mL (10<sup>3</sup>). Required DF = Stock / Target = 10<sup>9</sup> / 10<sup>3</sup> = 10<sup>6</sup>. So a 10<sup>-6</sup> dilution is needed." }
+                    ]
+                },
+                mixingSolutions: {
+                    easy: [
+                        { q: "What is the final volume when you mix 100 mL of solution A and 400 mL of solution B?", o: ["100 mL", "400 mL", "500 mL", "300 mL"], a: "500 mL", e: "The final volume is the sum of the individual volumes: 100 mL + 400 mL = 500 mL." },
+                        { q: "You mix 1 L of 2 M sugar water with 1 L of 4 M sugar water. What is the final concentration?", o: ["2 M", "3 M", "4 M", "6 M"], a: "3 M", e: "With equal volumes, the final concentration is the average of the two initial concentrations: (2 M + 4 M) / 2 = 3 M." }
+                    ],
+                    medium: [
+                        { q: "You mix 100 mL of a 5 M solution with 400 mL of a 1 M solution. What is the final Molarity?", o: ["1.8 M", "2.0 M", "3.0 M", "4.2 M"], a: "1.8 M", e: "C<sub>final</sub> = (C1V1 + C2V2) / (V1+V2) = (5&times;100 + 1&times;400) / (100+400) = (500+400)/500 = 1.8 M." }
+                    ],
+                    hard: [
+                        { q: "How many mL of 10 M stock must be added to 50 mL of 2 M solution to make a final concentration of 4 M?", o: ["16.7 mL", "20.5 mL", "25.0 mL", "33.3 mL"], a: "16.7 mL", e: "Use algebra: 4 = (10&times;V1 + 2&times;50) / (V1+50). 4V1 + 200 = 10V1 + 100. 100 = 6V1. V1 = 100/6 = 16.7 mL." }
+                    ]
+                },
+                molarity: {
+                    easy: [
+                        { q: "A 5% (w/v) solution of NaCl contains how many grams of NaCl in 100 mL?", o: ["0.5 g", "5 g", "50 g", "0.05 g"], a: "5 g", e: "% (w/v) is defined as grams per 100 mL. So a 5% solution has 5 g in 100 mL." },
+                        { q: "To make a 50% (v/v) ethanol solution in a total volume of 1 L, how much pure ethanol do you need?", o: ["50 mL", "250 mL", "500 mL", "750 mL"], a: "500 mL", e: "% (v/v) is mL of solute per 100 mL of solution. For 1000 mL, you need 50% of 1000, which is 500 mL." }
+                    ],
+                    medium: [
+                        { q: "How many grams of glucose (MW = 180 g/mol) are needed to make 1 L of a 0.5 M solution?", o: ["180 g", "90 g", "45 g", "360 g"], a: "90 g", e: "mass = Molarity &times; Litres &times; MW = 0.5 mol/L &times; 1 L &times; 180 g/mol = 90 g." },
+                        { q: "What is the molarity of a 20% (w/v) solution of NaOH (MW = 40 g/mol)?", o: ["2 M", "4 M", "5 M", "10 M"], a: "5 M", e: "20% (w/v) is 20 g/100 mL, which is 200 g/L. Molarity = (g/L) / MW = 200 g/L / 40 g/mol = 5 M." }
+                    ],
+                    hard: [
+                        { q: "How do you make 200 mL of 80% (v/v) ethanol from a 95% (v/v) stock?", o: ["168.4 mL of 95% stock, top up to 200 mL", "150.5 mL of 95% stock, top up to 200 mL", "175.0 mL of 95% stock, top up to 200 mL", "160.0 mL of 95% stock, top up to 200 mL"], a: "168.4 mL of 95% stock, top up to 200 mL", e: "Use C1V1=C2V2: (95%)(V1) = (80%)(200 mL). V1 = (80&times;200)/95 = 168.4 mL." }
+                    ]
+                },
+                absorbance: {
+                    easy: [
+                        { q: "According to the Beer-Lambert law (A=&epsilon;cl), if you double the concentration (c) of a solution, what happens to the absorbance (A)?", o: ["It halves", "It stays the same", "It doubles", "It quadruples"], a: "It doubles", e: "Absorbance is directly proportional to concentration. If 'c' doubles, 'A' doubles." }
+                    ],
+                    medium: [
+                        { q: "A solution has an absorbance of 0.6. The molar extinction coefficient (&epsilon;) is 6000 M<sup>-1</sup>cm<sup>-1</sup> and path length (l) is 1 cm. What is the concentration?", o: ["10 &micro;M", "50 &micro;M", "100 &micro;M", "200 &micro;M"], a: "100 &micro;M", e: "c = A / (&epsilon;l) = 0.6 / (6000 &times; 1) = 0.0001 M. Convert to &micro;M: 0.0001 M = 100 &micro;M." },
+                        { q: "What is the absorbance of a 50 &micro;M solution if &epsilon; = 10,000 M<sup>-1</sup>cm<sup>-1</sup> and l = 1 cm?", o: ["0.05", "0.5", "1.0", "5.0"], a: "0.5", e: "First, convert c to M: 50 &micro;M = 0.00005 M. Then A = &epsilon;cl = 10000 &times; 0.00005 &times; 1 = 0.5." }
+                    ],
+                    hard: [
+                        { q: "A 2 mM stock is diluted 1-in-20. The diluted solution gives an absorbance of 0.4 in a 1 cm cuvette. What is &epsilon;?", o: ["400 M<sup>-1</sup>cm<sup>-1</sup>", "4000 M<sup>-1</sup>cm<sup>-1</sup>", "2000 M<sup>-1</sup>cm<sup>-1</sup>", "8000 M<sup>-1</sup>cm<sup>-1</sup>"], a: "4000 M<sup>-1</sup>cm<sup>-1</sup>", e: "Diluted conc = 2 mM / 20 = 0.1 mM = 0.0001 M. &epsilon; = A/(cl) = 0.4 / (0.0001 &times; 1) = 4000 M<sup>-1</sup>cm<sup>-1</sup>." }
+                    ]
+                },
+                buffers: {
+                    easy: [
+                        { q: "If the concentration of the conjugate base [A<sup>-</sup>] is equal to the weak acid [HA], what is the relationship between pH and pKa?", o: ["pH > pKa", "pH < pKa", "pH = pKa", "Cannot be determined"], a: "pH = pKa", e: "When [A<sup>-</sup>] = [HA], the ratio is 1. Since log(1) = 0, the Henderson-Hasselbalch equation simplifies to pH = pKa." },
+                        { q: "To make a buffer more acidic than its pKa, you should have more of the...", o: ["Weak acid form (HA)", "Conjugate base form (A<sup>-</sup>)", "Salt", "Water"], a: "Weak acid form (HA)", e: "To lower the pH (make it more acidic), the ratio of [A<sup>-</sup>]/[HA] must be less than 1, meaning [HA] must be greater than [A<sup>-</sup>]." }
+                    ],
+                    medium: [
+                        { q: "A buffer contains 0.1 M weak acid (HA) and 0.1 M conjugate base (A<sup>-</sup>). The pKa is 7.2. What is the pH?", o: ["7.0", "7.1", "7.2", "7.3"], a: "7.2", e: "When [A<sup>-</sup>] = [HA], the ratio is 1, and log(1) = 0. Therefore, pH = pKa = 7.2." },
+                        { q: "A buffer has a pKa of 4.76. You add enough base to make the ratio of [A<sup>-</sup>]/[HA] equal to 10. What is the pH?", o: ["3.76", "4.76", "5.76", "6.76"], a: "5.76", e: "pH = pKa + log([A<sup>-</sup>]/[HA]) = 4.76 + log(10) = 4.76 + 1 = 5.76." }
+                    ],
+                    hard: [
+                        { q: "You need a pH 5.0 buffer. The weak acid you have has a pKa of 4.76. What ratio of [A<sup>-</sup>]/[HA] do you need?", o: ["0.58", "1.00", "1.74", "2.40"], a: "1.74", e: "pH = pKa + log(Ratio) => 5.0 = 4.76 + log(Ratio) => 0.24 = log(Ratio). Ratio = 10<sup>0.24</sup> &approx; 1.74." }
+                    ]
+                },
+                standardCurves: {
+                    easy: [
+                        { q: "A standard curve has the equation y = 2x, where y is absorbance and x is concentration. What is the absorbance of a 3 &micro;g/mL sample?", o: ["1.5", "3", "6", "9"], a: "6", e: "Substitute x=3 into the equation: y = 2 &times; 3 = 6." }
+                    ],
+                    medium: [
+                        { q: "A standard curve has the equation y = 0.1x + 0.05. An unknown has an absorbance (y) of 0.55. What is its concentration (x)?", o: ["4.0", "5.0", "5.5", "6.0"], a: "5.0", e: "Rearrange the formula: x = (y - 0.05) / 0.1. So x = (0.55 - 0.05) / 0.1 = 5.0." }
+                    ],
+                    hard: [
+                        { q: "Using y=0.1x+0.05, you dilute an unknown 1-in-10 and measure the absorbance as 0.25. What's the ORIGINAL concentration?", o: ["2.0", "10.0", "20.0", "25.0"], a: "20.0", e: "First find diluted conc: x = (0.25-0.05)/0.1 = 2.0. Then multiply by the dilution factor: 2.0 &times; 10 = 20.0." }
+                    ]
+                }
+            };
+
+            // --- DOM Elements ---
+            const topicGrid = document.getElementById('topic-grid');
+            const explanationDisplayArea = document.getElementById('explanation-display-area');
+            const gettingStartedBtn = document.getElementById('getting-started-btn');
+            const glossaryBtn = document.getElementById('glossary-btn');
+            const gettingStartedModal = document.getElementById('getting-started-modal');
+            const glossaryModal = document.getElementById('glossary-modal');
+            const closeButtons = document.querySelectorAll('.modal-close');
+
+            // --- QUIZ State ---
+            let quizState = {
+                currentTopic: null,
+                correctStreak: 0,
+                currentQuestion: null,
+                shuffledDecks: {}
+            };
+            
+            // --- App Initialization ---
+            const init = () => {
+                topicGrid.innerHTML = Object.keys(topics).map(key => `
+                    <div class="topic-card" data-topic-key="${key}">
+                        <h3>${topics[key]}</h3>
+                    </div>
+                `).join('');
+                
+                topicGrid.addEventListener('click', handleTopicClick);
+                explanationDisplayArea.addEventListener('click', handleExplanationAreaClick);
+                gettingStartedBtn.addEventListener('click', () => openModal(gettingStartedModal));
+                glossaryBtn.addEventListener('click', () => openModal(glossaryModal));
+                closeButtons.forEach(btn => btn.addEventListener('click', () => {
+                    closeModal(gettingStartedModal);
+                    closeModal(glossaryModal);
+                }));
+                window.addEventListener('click', e => {
+                    if (e.target === gettingStartedModal) closeModal(gettingStartedModal);
+                    if (e.target === glossaryModal) closeModal(glossaryModal);
+                });
+            };
+
+            // --- Event Handlers & Functions ---
+            const handleTopicClick = (event) => {
+                const clickedCard = event.target.closest('.topic-card');
+                if (!clickedCard) return;
+
+                document.querySelectorAll('.topic-card').forEach(card => card.classList.remove('active'));
+                clickedCard.classList.add('active');
+                
+                const topicKey = clickedCard.dataset.topicKey;
+                const fullExplanationHTML = topicExplanations[topicKey] || `<h2>${topics[topicKey]}</h2><p>Content coming soon.</p>`;
+                
+                explanationDisplayArea.innerHTML = `
+                    ${fullExplanationHTML}
+                    <button class="test-btn" data-topic-key="${topicKey}">Test Your Understanding</button>
+                    <div class="quiz-container hidden">
+                        <p id="quiz-question"></p>
+                        <div id="quiz-options"></div>
+                        <div id="quiz-feedback" class="hidden"></div>
+                        <button id="next-question-btn" class="hidden">Next Question</button>
+                    </div>
+                `;
+                explanationDisplayArea.classList.remove('hidden');
+            };
+
+            const handleExplanationAreaClick = (e) => {
+                if (e.target.matches('.test-btn')) {
+                    startQuiz(e.target.dataset.topicKey);
+                } else if (e.target.matches('#next-question-btn')) {
+                    generateQuestion();
+                } else if (e.target.matches('.option-btn') && !e.target.disabled) {
+                    checkAnswer(e.target);
+                } else if (e.target.matches('.method-tab')) {
+                    switchMethodView(e.target);
+                }
+            };
+
+            const switchMethodView = (tabButton) => {
+                const exampleIndex = tabButton.dataset.example;
+                const methodIndex = tabButton.dataset.method;
+
+                const exampleContainer = tabButton.closest('.example');
+
+                exampleContainer.querySelectorAll('.method-tab').forEach(tab => tab.classList.remove('active'));
+                exampleContainer.querySelectorAll('.method-solution').forEach(sol => sol.classList.add('hidden'));
+
+                tabButton.classList.add('active');
+                exampleContainer.querySelector(`.method-solution[data-example='${exampleIndex}'][data-method='${methodIndex}']`).classList.remove('hidden');
+            };
+            
+            const startQuiz = (topicKey) => {
+                quizState = {
+                    currentTopic: topicKey,
+                    correctStreak: 0,
+                    currentQuestion: null,
+                    shuffledDecks: {} // Reset decks for a new session
+                };
+                const quizContainer = explanationDisplayArea.querySelector('.quiz-container');
+                quizContainer.classList.remove('hidden');
+                generateQuestion();
+                quizContainer.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const generateQuestion = () => {
+                const questionBank = quizQuestions[quizState.currentTopic];
+                if (!questionBank || !Object.keys(questionBank).length) {
+                    explanationDisplayArea.querySelector('#quiz-question').textContent = "No questions available for this topic yet.";
+                    explanationDisplayArea.querySelector('#quiz-options').innerHTML = "";
+                    return;
+                }
+                
+                let difficulty = 'easy';
+                if (quizState.correctStreak >= 5 && questionBank.hard?.length) {
+                    difficulty = 'hard';
+                } else if (quizState.correctStreak >= 2 && questionBank.medium?.length) {
+                    difficulty = 'medium';
+                }
+
+                if (!quizState.shuffledDecks[difficulty] || quizState.shuffledDecks[difficulty].length === 0) {
+                    const originalPool = questionBank[difficulty] || questionBank['easy'];
+                    quizState.shuffledDecks[difficulty] = [...originalPool].sort(() => Math.random() - 0.5);
+                }
+
+                quizState.currentQuestion = quizState.shuffledDecks[difficulty].pop();
+                
+                const questionEl = explanationDisplayArea.querySelector('#quiz-question');
+                const optionsEl = explanationDisplayArea.querySelector('#quiz-options');
+                const feedbackEl = explanationDisplayArea.querySelector('#quiz-feedback');
+                const nextBtn = explanationDisplayArea.querySelector('#next-question-btn');
+
+                questionEl.innerHTML = quizState.currentQuestion.q;
+                const shuffledOptions = [...quizState.currentQuestion.o].sort(() => Math.random() - 0.5);
+                optionsEl.innerHTML = shuffledOptions.map(opt => `<button class="option-btn">${opt}</button>`).join('');
+                
+                feedbackEl.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            };
+
+            const checkAnswer = (selectedButton) => {
+                const options = explanationDisplayArea.querySelectorAll('.option-btn');
+                const feedbackEl = explanationDisplayArea.querySelector('#quiz-feedback');
+                const nextBtn = explanationDisplayArea.querySelector('#next-question-btn');
+                const userAnswer = selectedButton.innerHTML;
+
+                options.forEach(btn => {
+                    btn.disabled = true;
+                    if(btn.innerHTML === quizState.currentQuestion.a) btn.classList.add('correct');
+                });
+
+                if (userAnswer === quizState.currentQuestion.a) {
+                    selectedButton.classList.add('correct');
+                    feedbackEl.innerHTML = 'Correct!';
+                    feedbackEl.style.backgroundColor = '#d4edda';
+                    feedbackEl.style.color = '#155724';
+                    quizState.correctStreak++;
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    feedbackEl.innerHTML = `Incorrect. The correct answer is <strong>${quizState.currentQuestion.a}</strong>.
+                                            <div class="explanation">${quizState.currentQuestion.e}</div>`;
+                    feedbackEl.style.backgroundColor = '#f8d7da';
+                    feedbackEl.style.color = '#721c24';
+                    quizState.correctStreak = 0;
+                }
+                feedbackEl.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+            };
+
+            const openModal = (modal) => modal.classList.remove('hidden');
+            const closeModal = (modal) => modal.classList.add('hidden');
+            
+                init();
+            };
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', executeInit);
+            } else {
+                executeInit();
+            }
+        })();
+    </script>
+
+</body>
+</html>
